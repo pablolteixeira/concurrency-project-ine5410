@@ -2,7 +2,6 @@
 #define __CLOCK_H__
 
 #include <pthread.h>
-
 #include "args.h"
 
 
@@ -36,7 +35,7 @@ typedef struct virtual_clock {
 int msleep(long msec);
 
 void* clock_run(void* data);
-void clock_init(virtual_clock_t* self, config_t* config);
+virtual_clock_t* clock_init(config_t* config);
 void clock_finalize(virtual_clock_t* self);
 unsigned int read_minutes(unsigned int value);
 unsigned int read_hours(unsigned int value);

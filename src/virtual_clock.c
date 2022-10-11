@@ -21,12 +21,18 @@ void* clock_run(void* data) {
     pthread_exit(NULL);
 }
 
-void clock_init(virtual_clock_t* self, config_t* config) {
+virtual_clock_t* clock_init(config_t* config) {
+    virtual_clock_t* self = malloc(sizeof(virtual_clock_t));
+    if (self == NULL) {
+        fprintf(stdout, RED "[ERROR] Bad malloc() at `virtual_clock_t* clock_init()`.\n" NO_COLOR);
+        exit(EXIT_FAILURE);
+    }
     self->clock_speed_multiplier = config->clock_speed_multiplier;
     self->opening_time = 3600 * config->opening_time;
     self->closing_time = 3600 * config->closing_time;
     self->current_time = 3600 * config->opening_time;
     pthread_create(&self->thread, NULL, clock_run, (void *) self);
+    return self;
 }
 
 void clock_finalize(virtual_clock_t* self) {
