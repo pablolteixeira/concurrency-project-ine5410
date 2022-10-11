@@ -3,6 +3,9 @@
 
 #include <pthread.h>
 
+#include "args.h"
+
+
 /**
  * @brief Definição de constantes booleanas.
 */
@@ -10,17 +13,21 @@
 #define TRUE                     1
 
 /**
- * @brief Configurações de relógio virtual.
+ * @brief Definição de unidades de tempo úteis para o relógio virtual.
 */
-#define CLOCK_SPEED_MULTIPLIER   60
-#define STOP_TIME                18
+#define DAY                      86400
+#define HOUR                     3600
+#define MINUTE                   60
 
 /**
  * @brief Relógio virtual para simulação.
 */
 typedef struct virtual_clock {
     pthread_t thread;
-    unsigned int value;
+    unsigned int clock_speed_multiplier;
+    unsigned int opening_time;
+    unsigned int closing_time;
+    unsigned int current_time;
 } virtual_clock_t;
 
 /**
@@ -28,11 +35,12 @@ typedef struct virtual_clock {
 */
 int msleep(long msec);
 
-void* clock_run();
-void clock_init(virtual_clock_t* self);
-void clock_finalize(virtual_clock_t *self);
-int read_minutes(unsigned int clock_value);
-int read_hours(unsigned int clock_value);
-void read_clock();
+void* clock_run(void* data);
+void clock_init(virtual_clock_t* self, config_t* config);
+void clock_finalize(virtual_clock_t* self);
+unsigned int read_minutes(unsigned int value);
+unsigned int read_hours(unsigned int value);
+unsigned int read_seconds(unsigned int value);
+void read_clock(virtual_clock_t* self);
 
 #endif  // __CLOCK_H__

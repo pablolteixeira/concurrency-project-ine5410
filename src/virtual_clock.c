@@ -3,28 +3,30 @@
 #include <time.h>
 #include <errno.h>
 
-#include "messages.h"
 #include "virtual_clock.h"
 
 
-unsigned int clock_value = 0;
-
-void* clock_run() {
+void* clock_run(void* data) {
+    virtual_clock_t* self = (virtual_clock_t*) data;
     while (TRUE) {
-        read_clock();
-        if (clock_value == STOP_TIME) {
-            fprintf(stdout, RED "Simulation ended. Time: %d = %d\n" NO_COLOR, clock_value, STOP_TIME);
+        read_clock(self);
+        if (self->current_time >= DAY) {
+            /* The virtual clock stops after 1 day has passed since time 0 */
             break;
         }
         /* A cada segundo, o relógio virtual é incrementado por (1 x multiplier) segundos */
-        clock_value += 1 * CLOCK_SPEED_MULTIPLIER;
-        msleep(1000);
+        self->current_time += 1;
+        msleep(1000/self->clock_speed_multiplier);
     }
     pthread_exit(NULL);
 }
 
-void clock_init(virtual_clock_t* self) {
-    pthread_create(&self->thread, NULL, clock_run, (void *) NULL);
+void clock_init(virtual_clock_t* self, config_t* config) {
+    self->clock_speed_multiplier = config->clock_speed_multiplier;
+    self->opening_time = 3600 * config->opening_time;
+    self->closing_time = 3600 * config->closing_time;
+    self->current_time = 3600 * config->opening_time;
+    pthread_create(&self->thread, NULL, clock_run, (void *) self);
 }
 
 void clock_finalize(virtual_clock_t* self) {
@@ -32,16 +34,20 @@ void clock_finalize(virtual_clock_t* self) {
     free(self);
 }
 
-int read_hours(unsigned int clock_value) {
-    return clock_value / 3600;
+unsigned int read_hours(unsigned int value) {
+    return value / HOUR;
 }
 
-int read_minutes(unsigned int clock_value) {
-    return (clock_value / 60) % 60;
+unsigned int read_minutes(unsigned int value) {
+    return (value / MINUTE) % MINUTE;
 }
 
-void read_clock() {
-    fprintf(stdout, RED "%02dh%02dm\n" NO_COLOR, read_hours(clock_value), read_minutes(clock_value));
+unsigned int read_seconds(unsigned int value) {
+    return value % MINUTE;
+}
+
+void read_clock(virtual_clock_t* self) {
+    fprintf(stdout, GRAY "%02dh%02dm%02ds\n" NO_COLOR, read_hours(self->current_time), read_minutes(self->current_time), read_seconds(self->current_time));
 }
 
 int msleep(long msec) {
