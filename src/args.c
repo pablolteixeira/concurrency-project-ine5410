@@ -31,12 +31,44 @@ config_t parse(int argc, char **argv) {
                 break;
             case 'h':
                 help(argv);
-                exit(0);
+                exit(EXIT_SUCCESS);
             default:
-                exit(1);
+                exit(EXIT_FAILURE);
         }
     }
+
+    int abort = FALSE;
     simulation_summary(&config);
+
+    if (config.seats <= 20) {
+        fprintf(stdout, BROWN "[ABORTING] Number of seats (-s) must be equal or larger than 20.\n" NO_COLOR);
+        abort = TRUE;
+    }
+
+    if (config.sushi_chefs <= 1) {
+        fprintf(stdout, BROWN "[ABORTING] Number of sushi chefs (-c) must be equal or larger than 1.\n" NO_COLOR);
+        abort = TRUE;
+    }
+
+    if (config.conveyor_belt_capacity <= 30) {
+        fprintf(stdout, BROWN "[ABORTING] The conveyor belt capacity (-b) must not be lower than 30.\n" NO_COLOR);
+        abort = TRUE;
+    }
+
+    if (config.opening_time >= config.closing_time) {
+        fprintf(stdout, BROWN "[ABORTING] Opening time (-o) must happen before the closing time (-x).\n" NO_COLOR);
+        abort = TRUE;
+    }
+
+    if (config.clock_speed_multiplier < 1) {
+        fprintf(stdout, BROWN "[ABORTING] Clock speed multiplier (-m) must be equal or larger than 1.\n" NO_COLOR);
+        abort = TRUE;
+    }
+
+    if (abort == TRUE) {
+        exit(EXIT_SUCCESS);
+    }
+
     return config;
 }
 

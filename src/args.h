@@ -9,6 +9,12 @@
 #define __PROGRAM_AUTHOR__ "Vanderlei Munhoz (munhoz@proton.me)"
 
 /**
+ * @brief Definição de constantes booleanas.
+*/
+#define FALSE                    0
+#define TRUE                     1
+
+/**
  * @brief Configuração para uma simulação.
 */
 typedef struct config {

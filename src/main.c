@@ -11,7 +11,7 @@ virtual_clock_t* chefs_clock = NULL;
 void malloc_virtual_clock() {
     chefs_clock = malloc(sizeof(virtual_clock_t));
     if (chefs_clock == NULL) {
-        fprintf(stdout, RED "Bad Malloc Error.\n" NO_COLOR);
+        fprintf(stdout, RED "[ERROR] Bad Malloc at `void malloc_virtual_clock()`.\n" NO_COLOR);
         exit(EXIT_FAILURE);
     }
 }
