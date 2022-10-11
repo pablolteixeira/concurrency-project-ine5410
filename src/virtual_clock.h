@@ -34,12 +34,13 @@ typedef struct virtual_clock {
 */
 int msleep(long msec);
 
-void* clock_run(void* data);
 virtual_clock_t* clock_init(config_t* config);
+void* clock_run(void* arg);
 void clock_finalize(virtual_clock_t* self);
+
 unsigned int read_minutes(unsigned int value);
 unsigned int read_hours(unsigned int value);
 unsigned int read_seconds(unsigned int value);
-void read_clock(virtual_clock_t* self);
+void print_current_virtual_time(virtual_clock_t* self);
 
 #endif  // __CLOCK_H__

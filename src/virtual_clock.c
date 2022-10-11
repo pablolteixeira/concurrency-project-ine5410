@@ -6,10 +6,10 @@
 #include "virtual_clock.h"
 
 
-void* clock_run(void* data) {
-    virtual_clock_t* self = (virtual_clock_t*) data;
+void* clock_run(void* arg) {
+    virtual_clock_t* self = (virtual_clock_t*) arg;
     while (TRUE) {
-        read_clock(self);
+        //print_current_virtual_time(self);
         if (self->current_time >= DAY) {
             /* The virtual clock stops after 1 day has passed since time 0 */
             break;
@@ -27,11 +27,14 @@ virtual_clock_t* clock_init(config_t* config) {
         fprintf(stdout, RED "[ERROR] Bad malloc() at `virtual_clock_t* clock_init()`.\n" NO_COLOR);
         exit(EXIT_FAILURE);
     }
+
     self->clock_speed_multiplier = config->clock_speed_multiplier;
     self->opening_time = 3600 * config->opening_time;
     self->closing_time = 3600 * config->closing_time;
     self->current_time = 3600 * config->opening_time;
+
     pthread_create(&self->thread, NULL, clock_run, (void *) self);
+
     return self;
 }
 
@@ -52,25 +55,21 @@ unsigned int read_seconds(unsigned int value) {
     return value % MINUTE;
 }
 
-void read_clock(virtual_clock_t* self) {
+void print_current_virtual_time(virtual_clock_t* self) {
     fprintf(stdout, GRAY "%02dh%02dm%02ds\n" NO_COLOR, read_hours(self->current_time), read_minutes(self->current_time), read_seconds(self->current_time));
 }
 
 int msleep(long msec) {
     struct timespec ts;
     int res;
-
     if (msec < 0) {
         errno = EINVAL;
         return -1;
     }
-
     ts.tv_sec = msec / 1000;
     ts.tv_nsec = (msec % 1000) * 1000000;
-
     do {
         res = nanosleep(&ts, &ts);
     } while (res && errno == EINTR);
-
     return res;
 }
