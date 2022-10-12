@@ -6,10 +6,10 @@
 #include "virtual_clock.h"
 
 
-void* clock_run(void* arg) {
+void* virtual_clock_run(void* arg) {
     virtual_clock_t* self = (virtual_clock_t*) arg;
     while (TRUE) {
-        //print_current_virtual_time(self);
+        print_current_virtual_time(self);
         if (self->current_time >= DAY) {
             /* The virtual clock stops after 1 day has passed since time 0 */
             break;
@@ -21,10 +21,10 @@ void* clock_run(void* arg) {
     pthread_exit(NULL);
 }
 
-virtual_clock_t* clock_init(config_t* config) {
+virtual_clock_t* virtual_clock_init(config_t* config) {
     virtual_clock_t* self = malloc(sizeof(virtual_clock_t));
     if (self == NULL) {
-        fprintf(stdout, RED "[ERROR] Bad malloc() at `virtual_clock_t* clock_init()`.\n" NO_COLOR);
+        fprintf(stdout, RED "[ERROR] Bad malloc() at `virtual_clock_t* virtual_clock_init()`.\n" NO_COLOR);
         exit(EXIT_FAILURE);
     }
 
@@ -33,12 +33,12 @@ virtual_clock_t* clock_init(config_t* config) {
     self->closing_time = 3600 * config->closing_time;
     self->current_time = 3600 * config->opening_time;
 
-    pthread_create(&self->thread, NULL, clock_run, (void *) self);
+    pthread_create(&self->thread, NULL, virtual_clock_run, (void *) self);
 
     return self;
 }
 
-void clock_finalize(virtual_clock_t* self) {
+void virtual_clock_finalize(virtual_clock_t* self) {
     pthread_join(self->thread, NULL);
     free(self);
 }
@@ -56,7 +56,7 @@ unsigned int read_seconds(unsigned int value) {
 }
 
 void print_current_virtual_time(virtual_clock_t* self) {
-    fprintf(stdout, GRAY "%02dh%02dm%02ds\n" NO_COLOR, read_hours(self->current_time), read_minutes(self->current_time), read_seconds(self->current_time));
+    fprintf(stdout, GREEN "[INFO]" GRAY " Simulation clock: %02dh%02dm%02ds\n" NO_COLOR, read_hours(self->current_time), read_minutes(self->current_time), read_seconds(self->current_time));
 }
 
 int msleep(long msec) {

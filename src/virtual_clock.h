@@ -34,9 +34,9 @@ typedef struct virtual_clock {
 */
 int msleep(long msec);
 
-virtual_clock_t* clock_init(config_t* config);
-void* clock_run(void* arg);
-void clock_finalize(virtual_clock_t* self);
+virtual_clock_t* virtual_clock_init(config_t* config);
+void* virtual_clock_run(void* arg);
+void virtual_clock_finalize(virtual_clock_t* self);
 
 unsigned int read_minutes(unsigned int value);
 unsigned int read_hours(unsigned int value);

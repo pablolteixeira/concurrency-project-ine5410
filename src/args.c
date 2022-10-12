@@ -7,18 +7,18 @@
 
 config_t parse(int argc, char **argv) {
     int c;
-    config_t config = { 50, 2, 100, 10, 18, 60 };
+    config_t config = { 2, 50, 1, 10, 18, 60 };
 
-    while ((c = getopt(argc, argv, "s:c:b:o:x:m:h")) != -1) {
+    while ((c = getopt(argc, argv, "c:b:s:o:x:m:h")) != -1) {
         switch (c) {
-            case 's':
-                config.seats = atoi(optarg);
-                break;
             case 'c':
                 config.sushi_chefs = atoi(optarg);
                 break;
             case 'b':
                 config.conveyor_belt_capacity = atoi(optarg);
+                break;
+            case 's':
+                config.conveyor_belt_speed = atoi(optarg);
                 break;
             case 'o':
                 config.opening_time = atoi(optarg);
@@ -40,11 +40,6 @@ config_t parse(int argc, char **argv) {
     int abort = FALSE;
     simulation_summary(&config);
 
-    if (config.seats <= 20) {
-        fprintf(stdout, BROWN "[ABORTING] Number of seats (-s) must be equal or larger than 20.\n" NO_COLOR);
-        abort = TRUE;
-    }
-
     if (config.sushi_chefs <= 1) {
         fprintf(stdout, BROWN "[ABORTING] Number of sushi chefs (-c) must be equal or larger than 1.\n" NO_COLOR);
         abort = TRUE;
@@ -52,6 +47,11 @@ config_t parse(int argc, char **argv) {
 
     if (config.conveyor_belt_capacity <= 30) {
         fprintf(stdout, BROWN "[ABORTING] The conveyor belt capacity (-b) must not be lower than 30.\n" NO_COLOR);
+        abort = TRUE;
+    }
+
+    if ((config.conveyor_belt_speed < 1) || (config.conveyor_belt_speed > 10)) {
+        fprintf(stdout, BROWN "[ABORTING] Conveyor belt speed must be a value between 1 and 10.\n" NO_COLOR);
         abort = TRUE;
     }
 
@@ -101,9 +101,9 @@ void separator() {
 void usage(char* program_name) {
     fprintf(stdout, MAGENTA "Usage: " NO_COLOR "%s [OPTIONS]\n", program_name);
     fprintf(stdout, MAGENTA "Options:\n" NO_COLOR);
-    fprintf(stdout, "  -t  Number of seats (default=50).\n");
-    fprintf(stdout, "  -s  Number of sushi chefs (default=2).\n");
-    fprintf(stdout, "  -c  Conveyor belt capacity (default=100).\n");
+    fprintf(stdout, "  -c  Number of sushi chefs (default=2).\n");
+    fprintf(stdout, "  -b  Conveyor belt capacity (default=50).\n");
+    fprintf(stdout, "  -s  Conveyor belt speed (default=1).\n");
     fprintf(stdout, "  -o  Opening time (default=10).\n");
     fprintf(stdout, "  -x  Closing time (default=18).\n");
     fprintf(stdout, "  -m  Clock speed multiplier (default=60).\n");
@@ -112,9 +112,9 @@ void usage(char* program_name) {
 
 void configuration(config_t* config) {
     fprintf(stdout, MAGENTA "Simulation configuration parameters:\n" NO_COLOR);
-    fprintf(stdout, GREEN "  Seats                   " NO_COLOR "%d\n", config->seats);
     fprintf(stdout, GREEN "  Sushi Chefs             " NO_COLOR "%d\n", config->sushi_chefs);
     fprintf(stdout, GREEN "  Conveyor Belt Capacity  " NO_COLOR "%d\n", config->conveyor_belt_capacity);
+    fprintf(stdout, GREEN "  Conveyor Belt Speed     " NO_COLOR "%d\n", config->conveyor_belt_speed);
     fprintf(stdout, GREEN "  Opening time            " NO_COLOR "%dh\n", config->opening_time);
     fprintf(stdout, GREEN "  Closing time            " NO_COLOR "%dh\n", config->closing_time);
     fprintf(stdout, GREEN "  Clock speed multiplier  " NO_COLOR "%dx\n", config->clock_speed_multiplier);

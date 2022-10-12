@@ -62,7 +62,7 @@ void customer_finalize(customer_t* self) {
 }
 
 void print_customer(customer_t* self) {
-    fprintf(stdout, BLUE "  Customer " NO_COLOR "{\n");
+    fprintf(stdout, BLUE "[DEBUG] Customer " NO_COLOR "{\n");
     fprintf(stdout, BLUE "    _id" NO_COLOR ": %d\n", self->_id);
     fprintf(stdout, BLUE "    _wishes" NO_COLOR ": [%d, %d, %d, %d, %d]\n", self->_wishes[0], self->_wishes[1], self->_wishes[2], self->_wishes[3], self->_wishes[4]);
     fprintf(stdout, BLUE "    _is_drinking" NO_COLOR ": %d\n", self->_is_drinking);

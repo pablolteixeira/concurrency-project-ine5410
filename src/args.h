@@ -18,9 +18,9 @@
  * @brief Configuração para uma simulação.
 */
 typedef struct config {
-    unsigned int seats;
     unsigned int sushi_chefs;
     unsigned int conveyor_belt_capacity;
+    unsigned int conveyor_belt_speed;
     unsigned int opening_time;
     unsigned int closing_time;
     unsigned int clock_speed_multiplier;
