@@ -23,6 +23,7 @@
 */
 typedef struct virtual_clock {
     pthread_t thread;
+    pthread_cond_t closing_time_cond_var;
     unsigned int clock_speed_multiplier;
     unsigned int opening_time;
     unsigned int closing_time;

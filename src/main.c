@@ -22,7 +22,6 @@ int main (int argc, char** argv) {
 
     /* Setup sushi conveyor belt */
     globals_set_conveyor_belt(conveyor_belt_init(&config));
-    print_conveyor_belt(globals_get_conveyor_belt());
 
     /* Join threads and free used memory */
     customer_finalize(customer_1);

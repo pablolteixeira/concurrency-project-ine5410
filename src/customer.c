@@ -67,5 +67,5 @@ void print_customer(customer_t* self) {
     fprintf(stdout, BLUE "    _wishes" NO_COLOR ": [%d, %d, %d, %d, %d]\n", self->_wishes[0], self->_wishes[1], self->_wishes[2], self->_wishes[3], self->_wishes[4]);
     fprintf(stdout, BLUE "    _is_drinking" NO_COLOR ": %d\n", self->_is_drinking);
     fprintf(stdout, BLUE "    _seat_position" NO_COLOR ": %d\n", self->_seat_position);
-    fprintf(stdout, NO_COLOR "  }\n" NO_COLOR);
+    fprintf(stdout, NO_COLOR "}\n" NO_COLOR);
 }

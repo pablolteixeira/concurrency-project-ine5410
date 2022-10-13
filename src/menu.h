@@ -13,10 +13,17 @@
 */
 enum menu_item {
     Sushi=0,
-    Onigiri=1,
+    Dango=1,
     Tonkatsu=2,
     Gyosa=3,
     Tofu=4,
 };
+
+#define SUSHI                    "🍣"
+#define DANGO                    "🍡"
+#define RAMEN                    "🍜"
+#define ONIGIRI                  "🍙"
+#define TOFU                     "🧈"
+#define EMPTY                    "__"
 
 #endif  //__MENU_H__

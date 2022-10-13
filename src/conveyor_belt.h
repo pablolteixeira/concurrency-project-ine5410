@@ -18,6 +18,7 @@ typedef struct conveyor_belt {
     int _empty_slots;
     int _max_slots;
     int _belt_speed;
+    int* _slots;
     pthread_t thread;
 } conveyor_belt_t;
 

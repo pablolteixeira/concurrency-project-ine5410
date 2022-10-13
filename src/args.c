@@ -45,8 +45,8 @@ config_t parse(int argc, char **argv) {
         abort = TRUE;
     }
 
-    if (config.conveyor_belt_capacity <= 30) {
-        fprintf(stdout, BROWN "[ABORTING] The conveyor belt capacity (-b) must not be lower than 30.\n" NO_COLOR);
+    if (config.conveyor_belt_capacity < 10) {
+        fprintf(stdout, BROWN "[ABORTING] The conveyor belt capacity (-b) must not be lower than 10.\n" NO_COLOR);
         abort = TRUE;
     }
 

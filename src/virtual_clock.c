@@ -10,10 +10,12 @@ void* virtual_clock_run(void* arg) {
     virtual_clock_t* self = (virtual_clock_t*) arg;
     while (TRUE) {
         print_current_virtual_time(self);
-        if (self->current_time >= DAY) {
-            /* The virtual clock stops after 1 day has passed since time 0 */
-            break;
+        
+        if (self->current_time >= self->closing_time) {
+            /* Wake up one thread waiting for condition variable */
+            pthread_cond_signal(&self->closing_time_cond_var);
         }
+
         /* A cada segundo, o relógio virtual é incrementado por (1 x multiplier) segundos */
         self->current_time += 1;
         msleep(1000/self->clock_speed_multiplier);
@@ -33,6 +35,7 @@ virtual_clock_t* virtual_clock_init(config_t* config) {
     self->closing_time = 3600 * config->closing_time;
     self->current_time = 3600 * config->opening_time;
 
+    pthread_cond_init(&self->closing_time_cond_var, NULL);
     pthread_create(&self->thread, NULL, virtual_clock_run, (void *) self);
 
     return self;
