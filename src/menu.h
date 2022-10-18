@@ -14,8 +14,8 @@
 enum menu_item {
     Sushi=0,
     Dango=1,
-    Tonkatsu=2,
-    Gyosa=3,
+    Ramen=2,
+    Onigiri=3,
     Tofu=4,
 };
 
@@ -24,6 +24,13 @@ enum menu_item {
 #define RAMEN                    "🍜"
 #define ONIGIRI                  "🍙"
 #define TOFU                     "🧈"
+
 #define EMPTY                    "__"
+
+#define SUSHI_PREP_TIME          10000
+#define DANGO_PREP_TIME          10000
+#define RAMEN_PREP_TIME          10000
+#define ONIGIRI_PREP_TIME        10000
+#define TOFU_PREP_TIME           10000
 
 #endif  //__MENU_H__

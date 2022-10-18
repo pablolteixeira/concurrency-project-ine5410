@@ -4,6 +4,7 @@
 
 #include "args.h"
 #include "customer.h"
+#include "sushi_chef.h"
 #include "globals.h"
 
 
@@ -22,6 +23,9 @@ int main (int argc, char** argv) {
 
     /* Setup sushi conveyor belt */
     globals_set_conveyor_belt(conveyor_belt_init(&config));
+
+    sushi_chef_t* chef = sushi_chef_init(8, 5);
+    print_sushi_chef(chef);
 
     /* Join threads and free used memory */
     customer_finalize(customer_1);
