@@ -17,6 +17,7 @@
 #define DAY                      86400
 #define HOUR                     3600
 #define MINUTE                   60
+#define MS                       1000
 
 /**
  * @brief Relógio virtual para simulação.
@@ -42,6 +43,7 @@ void virtual_clock_finalize(virtual_clock_t* self);
 unsigned int read_minutes(unsigned int value);
 unsigned int read_hours(unsigned int value);
 unsigned int read_seconds(unsigned int value);
-void print_current_virtual_time(virtual_clock_t* self);
+unsigned int read_ms(unsigned int value);
+void print_virtual_time(virtual_clock_t* self);
 
 #endif  // __CLOCK_H__

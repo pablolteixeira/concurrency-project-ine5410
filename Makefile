@@ -21,7 +21,7 @@ endif
 
 # Color definition for print purpose
 BROWN=\$(COLOR_PREFIX)[0;33m
-BLUE=\$(COLOR_PREFIX)[1;34m
+BROWN=\$(COLOR_PREFIX)[1;34m
 END_COLOR=\$(COLOR_PREFIX)[0m
 
 # Source code directory structure

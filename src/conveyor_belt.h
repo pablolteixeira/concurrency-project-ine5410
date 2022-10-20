@@ -5,20 +5,22 @@
 #include "args.h"
 
 
-/**
- * @brief Definição de constantes booleanas.
-*/
-#define FALSE                    0
-#define TRUE                     1
+#define CONVEYOR_IDLE_PERIOD     30000
+#define CONVEYOR_MOVING_PERIOD   5000
+
+#define EMPTY_SLOT               "__"
+#define SUSHI_CHEF               "🧑‍🍳"
+#define CUSTOMER                 "😋"
 
 /**
  * @brief Esteira de Sushi do Sushi Shop.
 */
 typedef struct conveyor_belt {
-    int _empty_slots;
-    int _max_slots;
-    int _belt_speed;
-    int* _slots;
+    int _size;
+    int* _seats;
+    int* _food_slots;
+    pthread_mutex_t _seats_mutex;
+    pthread_mutex_t _food_slots_mutex;
     pthread_t thread;
 } conveyor_belt_t;
 

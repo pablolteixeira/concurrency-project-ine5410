@@ -25,12 +25,10 @@ enum menu_item {
 #define ONIGIRI                  "🍙"
 #define TOFU                     "🧈"
 
-#define EMPTY                    "__"
-
-#define SUSHI_PREP_TIME          10000
-#define DANGO_PREP_TIME          10000
-#define RAMEN_PREP_TIME          10000
-#define ONIGIRI_PREP_TIME        10000
-#define TOFU_PREP_TIME           10000
+#define SUSHI_PREP_TIME          60000
+#define DANGO_PREP_TIME          60000
+#define RAMEN_PREP_TIME          60000
+#define ONIGIRI_PREP_TIME        60000
+#define TOFU_PREP_TIME           60000
 
 #endif  //__MENU_H__

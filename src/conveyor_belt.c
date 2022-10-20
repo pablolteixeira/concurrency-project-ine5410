@@ -3,34 +3,38 @@
 
 #include "conveyor_belt.h"
 #include "virtual_clock.h"
+#include "globals.h"
 #include "menu.h"
 
 
-pthread_mutex_t conveyor_mutex;
-pthread_cond_t conveyor_rotation_cond_var;
-
 void* conveyor_belt_run(void* arg) {
+    /* ESSA FUNÇÃO JÁ POSSUÍ A LÓGICA DE FUNCIONAMENTO DA ESTEIRA, E NÃO PRECISA SER EDITADA */
     conveyor_belt_t* self = (conveyor_belt_t*) arg;
+    virtual_clock_t* virtual_clock = globals_get_virtual_clock();
+
     while (TRUE) {
-        msleep(5000);
+        msleep(CONVEYOR_IDLE_PERIOD/virtual_clock->clock_speed_multiplier);
 
         /* Lock global conveyor_belt */
-        pthread_mutex_lock(&conveyor_mutex);
+        pthread_mutex_lock(&self->_food_slots_mutex);
 
+        print_virtual_time(globals_get_virtual_clock());
         fprintf(stdout, GREEN "[INFO]" NO_COLOR " Conveyor belt started moving...\n");
-        msleep(2000/self->_belt_speed);
+        print_conveyor_belt(self);
+
+        msleep(CONVEYOR_MOVING_PERIOD/virtual_clock->clock_speed_multiplier);
 
         /* Rotate every conveyor slot by 1 index */
-        int last = self->_slots[0];
-        for (int i=0; i<self->_max_slots-1; i++) {
-            self->_slots[i] = self->_slots[i+1];
+        int last = self->_food_slots[0];
+        for (int i=0; i<self->_size-1; i++) {
+            self->_food_slots[i] = self->_food_slots[i+1];
         }
-        self->_slots[self->_max_slots-1] = last;
+        self->_food_slots[self->_size-1] = last;
 
         /* Unlock global conveyor belt */
-        pthread_cond_broadcast(&conveyor_rotation_cond_var);
-        pthread_mutex_unlock(&conveyor_mutex);
+        pthread_mutex_unlock(&self->_food_slots_mutex);
 
+        print_virtual_time(globals_get_virtual_clock());
         fprintf(stdout, GREEN "[INFO]" NO_COLOR " Conveyor belt finished moving...\n");
         print_conveyor_belt(self);
     }
@@ -43,50 +47,40 @@ conveyor_belt_t* conveyor_belt_init(config_t* config) {
         fprintf(stdout, RED "[ERROR] Bad malloc() at `conveyor_belt_t* conveyor_belt_init()`.\n" NO_COLOR);
         exit(EXIT_FAILURE);
     }
-
-    self->_empty_slots = config->conveyor_belt_capacity;
-    self->_max_slots = config->conveyor_belt_capacity;
-    self->_belt_speed = config->conveyor_belt_speed;
-    self->_slots = (int*) malloc(sizeof(int)* self->_max_slots);
-
-    for (int i=0; i<self->_max_slots; i++) {
-        /* Initialize conveyor belt slots to -1 */
-        if (i==10) {
-            self->_slots[i] = 0;
-        } else {
-            self->_slots[i] = -1;
-        }
+    self->_size = config->conveyor_belt_capacity;
+    self->_seats = (int*) malloc(sizeof(int)* self->_size);
+    self->_food_slots = (int*) malloc(sizeof(int)* self->_size);
+    for (int i=0; i<self->_size; i++) {
+        self->_food_slots[i] = -1;
+        self->_seats[i] = -1;
     }
-
-    pthread_mutex_init(&conveyor_mutex, NULL);
-    pthread_cond_init(&conveyor_rotation_cond_var, NULL);
-
+    pthread_mutex_init(&self->_seats_mutex, NULL);
+    pthread_mutex_init(&self->_food_slots_mutex, NULL);
     pthread_create(&self->thread, NULL, conveyor_belt_run, (void *) self);
     print_conveyor_belt(self);
-
     return self;
 }
 
 void conveyor_belt_finalize(conveyor_belt_t* self) {
     pthread_join(self->thread, NULL);
-    pthread_mutex_destroy(&conveyor_mutex);
-    pthread_cond_destroy(&conveyor_rotation_cond_var);
+    pthread_mutex_destroy(&self->_seats_mutex);
+    pthread_mutex_destroy(&self->_food_slots_mutex);
     free(self);
 }
 
 void print_conveyor_belt(conveyor_belt_t* self) {
-    fprintf(stdout, BLUE "[DEBUG] Conveyor Belt " NO_COLOR "{\n");
-    fprintf(stdout, BLUE "    _empty_slots" NO_COLOR ": %d\n", self->_empty_slots);
-    fprintf(stdout, BLUE "    _max_slots" NO_COLOR ": %d\n", self->_max_slots);
-    fprintf(stdout, BLUE "    _belt_speed" NO_COLOR ": %d\n", self->_belt_speed);
-    fprintf(stdout, BLUE "    _slots" NO_COLOR ": [");
-    for (int i=0; i<self->_max_slots; i++) {
+    print_virtual_time(globals_get_virtual_clock());
+    fprintf(stdout, BROWN "[DEBUG] Conveyor Belt " NO_COLOR "{\n");
+    fprintf(stdout, BROWN "    _size" NO_COLOR ": %d\n", self->_size);
+    
+    fprintf(stdout, BROWN "    _food_slots" NO_COLOR ": [");
+    for (int i=0; i<self->_size; i++) {
         if (i%25 == 0) {
             fprintf(stdout, NO_COLOR "\n        ");
         }
-        switch (self->_slots[i]) {
+        switch (self->_food_slots[i]) {
             case -1:
-                fprintf(stdout, NO_COLOR "%s, ", EMPTY);
+                fprintf(stdout, NO_COLOR "%s, ", EMPTY_SLOT);
                 break;
             case 0:
                 fprintf(stdout, NO_COLOR "%s, ", SUSHI);
@@ -105,6 +99,27 @@ void print_conveyor_belt(conveyor_belt_t* self) {
                 break;
             default:
                 fprintf(stdout, RED "[ERROR] Invalid menu item code in the Conveyor Belt.\n" NO_COLOR);
+                exit(EXIT_FAILURE);
+        }
+    }
+    fprintf(stdout, NO_COLOR "\n    ]\n");
+    
+    fprintf(stdout, BROWN "    _seats" NO_COLOR ": [");
+    for (int i=0; i<self->_size; i++) {
+        if (i%25 == 0) {
+            fprintf(stdout, NO_COLOR "\n        ");
+        }
+        switch (self->_seats[i]) {
+            case -1:
+                fprintf(stdout, NO_COLOR "%s, ", EMPTY_SLOT);
+                break;
+            case 0:
+                fprintf(stdout, NO_COLOR "%s, ", SUSHI_CHEF);
+                break;
+            case 1:
+                fprintf(stdout, NO_COLOR "%s, ", CUSTOMER);
+            default:
+                fprintf(stdout, RED "[ERROR] Invalid seat state code in the Conveyor Belt.\n" NO_COLOR);
                 exit(EXIT_FAILURE);
         }
     }

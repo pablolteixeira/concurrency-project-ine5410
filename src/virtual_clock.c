@@ -9,14 +9,9 @@
 void* virtual_clock_run(void* arg) {
     virtual_clock_t* self = (virtual_clock_t*) arg;
     while (TRUE) {
-        print_current_virtual_time(self);
-        
         if (self->current_time >= self->closing_time) {
-            /* Wake up one thread waiting for condition variable */
             pthread_cond_signal(&self->closing_time_cond_var);
         }
-
-        /* A cada segundo, o relógio virtual é incrementado por (1 x multiplier) segundos */
         self->current_time += 1;
         msleep(1000/self->clock_speed_multiplier);
     }
@@ -29,15 +24,12 @@ virtual_clock_t* virtual_clock_init(config_t* config) {
         fprintf(stdout, RED "[ERROR] Bad malloc() at `virtual_clock_t* virtual_clock_init()`.\n" NO_COLOR);
         exit(EXIT_FAILURE);
     }
-
     self->clock_speed_multiplier = config->clock_speed_multiplier;
     self->opening_time = 3600 * config->opening_time;
     self->closing_time = 3600 * config->closing_time;
     self->current_time = 3600 * config->opening_time;
-
     pthread_cond_init(&self->closing_time_cond_var, NULL);
     pthread_create(&self->thread, NULL, virtual_clock_run, (void *) self);
-
     return self;
 }
 
@@ -58,8 +50,12 @@ unsigned int read_seconds(unsigned int value) {
     return value % MINUTE;
 }
 
-void print_current_virtual_time(virtual_clock_t* self) {
-    fprintf(stdout, GREEN "[INFO]" GRAY " Simulation clock: %02dh%02dm%02ds\n" NO_COLOR, read_hours(self->current_time), read_minutes(self->current_time), read_seconds(self->current_time));
+unsigned int read_ms(unsigned int value) {
+    return value % MS;
+}
+
+void print_virtual_time(virtual_clock_t* self) {
+    fprintf(stdout, MAGENTA "[%02dh%02dm%02ds %04dms] " NO_COLOR, read_hours(self->current_time), read_minutes(self->current_time), read_seconds(self->current_time), read_ms(self->current_time));
 }
 
 int msleep(long msec) {

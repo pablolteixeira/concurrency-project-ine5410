@@ -3,18 +3,9 @@
 
 #include <pthread.h>
 #include "args.h"
+#include "menu.h"
+#include "conveyor_belt.h"
 
-
-/**
- * @brief Definição de constantes booleanas.
-*/
-#define FALSE                    0
-#define TRUE                     1
-
-/**
- * @brief Definição de constantes úteis para os clientes do Sushi shop.
-*/
-#define NOT_SEATED               -1
 
 /**
  * @brief Cliente do Sushi Shop.
@@ -32,5 +23,9 @@ void* customer_run(void* arg);
 void customer_finalize(customer_t* self);
 
 void print_customer(customer_t* self);
+
+void customer_seat(customer_t* self);
+void customer_eat(customer_t* self, enum menu_item food);
+void customer_leave(customer_t* self);
 
 #endif  //__CUSTOMER_H__

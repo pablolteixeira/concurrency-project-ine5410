@@ -3,18 +3,9 @@
 
 #include <pthread.h>
 #include "args.h"
+#include "menu.h"
+#include "conveyor_belt.h"
 
-
-/**
- * @brief Definição de constantes booleanas.
-*/
-#define FALSE                    0
-#define TRUE                     1
-
-/**
- * @brief Definição de constantes úteis para os clientes do Sushi shop.
-*/
-#define NOT_SEATED               -1
 
 /**
  * @brief Estrutura encapsulando um Sushi chef.
@@ -22,12 +13,18 @@
 typedef struct sushi_chef {
     int _id;
     int _seat_position;
-    int _preparation_speed;
     pthread_t thread;
 } sushi_chef_t;
 
-sushi_chef_t* sushi_chef_init(int seat_position, int preparation_speed);
+void seat_at_conveyor_slot(sushi_chef_t* self, conveyor_belt_t* conveyor);
+void sushi_chef_leave_seat(sushi_chef_t* self, conveyor_belt_t* conveyor);
+void sushi_chef_place_food(sushi_chef_t* self, enum menu_item dish);
+void sushi_chef_prepare_food(sushi_chef_t* self, enum menu_item menu_item);
+
+sushi_chef_t* sushi_chef_init();
 void* sushi_chef_run(void* arg);
 void sushi_chef_finalize(sushi_chef_t* self);
+
+void print_sushi_chef(sushi_chef_t* self);
 
 #endif  // __SUSHI_CHEF_H__

@@ -1,9 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "customer.h"
-#include "menu.h"
 #include "virtual_clock.h"
+#include "customer.h"
+#include "globals.h"
 
 
 void* customer_run(void* arg) {
@@ -23,11 +23,7 @@ void customer_seat(customer_t* self) {
     /* INSIRA SUA LÓGICA AQUI */
 }
 
-void customer_eat_sushi(customer_t* self) {
-    /* INSIRA SUA LÓGICA AQUI */
-}
-
-void customer_drink_sake(customer_t* self) {
+void customer_eat(customer_t* self, enum menu_item food) {
     /* INSIRA SUA LÓGICA AQUI */
 }
 
@@ -49,7 +45,7 @@ customer_t* customer_init() {
         /* Generate a desired random amount for each menu item */
         self->_wishes[i] = (rand() % (MAXIMUM - MINIMUM + 1));
     }
-    self->_seat_position = NOT_SEATED;
+    self->_seat_position = -1;
 
     pthread_create(&self->thread, NULL, customer_run, (void *) self);
 
@@ -62,10 +58,11 @@ void customer_finalize(customer_t* self) {
 }
 
 void print_customer(customer_t* self) {
-    fprintf(stdout, BLUE "[DEBUG] Customer " NO_COLOR "{\n");
-    fprintf(stdout, BLUE "    _id" NO_COLOR ": %d\n", self->_id);
-    fprintf(stdout, BLUE "    _wishes" NO_COLOR ": [%d, %d, %d, %d, %d]\n", self->_wishes[0], self->_wishes[1], self->_wishes[2], self->_wishes[3], self->_wishes[4]);
-    fprintf(stdout, BLUE "    _is_drinking" NO_COLOR ": %d\n", self->_is_drinking);
-    fprintf(stdout, BLUE "    _seat_position" NO_COLOR ": %d\n", self->_seat_position);
+    print_virtual_time(globals_get_virtual_clock());
+    fprintf(stdout, BROWN "[DEBUG] Customer " NO_COLOR "{\n");
+    fprintf(stdout, BROWN "    _id" NO_COLOR ": %d\n", self->_id);
+    fprintf(stdout, BROWN "    _wishes" NO_COLOR ": [%d, %d, %d, %d, %d]\n", self->_wishes[0], self->_wishes[1], self->_wishes[2], self->_wishes[3], self->_wishes[4]);
+    fprintf(stdout, BROWN "    _is_drinking" NO_COLOR ": %d\n", self->_is_drinking);
+    fprintf(stdout, BROWN "    _seat_position" NO_COLOR ": %d\n", self->_seat_position);
     fprintf(stdout, NO_COLOR "}\n" NO_COLOR);
 }
