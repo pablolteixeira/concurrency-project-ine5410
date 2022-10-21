@@ -31,18 +31,17 @@ void* sushi_chef_run(void* arg) {
 void sushi_chef_seat(sushi_chef_t* self) {
     /* MODIFIQUE ESSA FUNÇÃO PARA GARANTIR O COMPORTAMENTO CORRETO E EFICAZ DO SUSHI CHEF */
     /* NOTAS:
-     * 1. O CHEF DEVE PRIORIZAR SENTAR-SE NA "PONTA ESQUERDA" OU INÍCIO DA ESTEIRA
+     * 1. O CHEF DEVE SENTAR-SE NA "PONTA ESQUERDA" OU INÍCIO DA ESTEIRA
      * 2. NO ARRAY ˜conveyor_belt_t->_seats` UM SUSHI CHEF É REPRESENTADO POR 0
      * 3. NO ARRAY ˜conveyor_belt_t->_seats` UM ASSENTO VAZIO É REPRESENTADO POR -1
-     * 4. CASO NÃO EXISTAM ASSENTOS LIVRES PARA O SUSHI CHEF, ELE DEVE TER PRIORIDADE NA FILA SOBRE OS CLIENTES
-     * 5. CUIDADO COM ERROS DE CONCORRÊNCIA
-     * 6. NÃO REMOVA OS PRINTS
+     * 4. CUIDADO COM ERROS DE CONCORRÊNCIA
+     * 5. NÃO REMOVA OS PRINTS
     */ 
     conveyor_belt_t* conveyor = globals_get_conveyor_belt();
 
     print_virtual_time(globals_get_virtual_clock());
     fprintf(stdout, GREEN "[INFO]" NO_COLOR " Sushi Chef %d arrived at the Sushi Shop and wants to seat!\n", self->_id);
-    msleep(1000);
+    
     while (TRUE) {
         for (int i=0; i<conveyor->_size; i++) {
             pthread_mutex_lock(&conveyor->_seats_mutex);
@@ -51,6 +50,7 @@ void sushi_chef_seat(sushi_chef_t* self) {
                 self->_seat_position = i;
                 print_virtual_time(globals_get_virtual_clock());
                 fprintf(stdout, GREEN "[INFO]" NO_COLOR " Sushi Chef %d seated at conveyor->_seats[%d]!\n", self->_id, i);
+                pthread_mutex_unlock(&conveyor->_seats_mutex);
                 break;
             }
             pthread_mutex_unlock(&conveyor->_seats_mutex);

@@ -64,7 +64,8 @@ void print_conveyor_belt(conveyor_belt_t* self) {
     print_virtual_time(globals_get_virtual_clock());
     fprintf(stdout, BROWN "[DEBUG] Conveyor Belt " NO_COLOR "{\n");
     fprintf(stdout, BROWN "    _size" NO_COLOR ": %d\n", self->_size);
-    
+    int error_flag = FALSE;
+
     fprintf(stdout, BROWN "    _food_slots" NO_COLOR ": [");
     for (int i=0; i<self->_size; i++) {
         if (i%25 == 0) {
@@ -110,6 +111,7 @@ void print_conveyor_belt(conveyor_belt_t* self) {
                 break;
             case 1:
                 fprintf(stdout, NO_COLOR "%s, ", CUSTOMER);
+                break;
             default:
                 fprintf(stdout, RED "[ERROR] Invalid seat state code in the Conveyor Belt.\n" NO_COLOR);
                 exit(EXIT_FAILURE);

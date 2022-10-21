@@ -30,4 +30,4 @@ void conveyor_belt_finalize(conveyor_belt_t* self);
 
 void print_conveyor_belt(conveyor_belt_t* self);
 
-#endif  //__CONVEYOR_BELT_H__
+#endif  // __CONVEYOR_BELT_H__

@@ -13,7 +13,6 @@
 typedef struct customer {
     int _id;
     int _wishes[5];
-    int _is_drinking;
     int _seat_position;
     pthread_t thread;
 } customer_t;

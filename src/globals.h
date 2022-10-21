@@ -4,6 +4,7 @@
 
 #include "conveyor_belt.h"
 #include "virtual_clock.h"
+#include "queue.h"
 
 /**
  * @brief Inicia um relógio virtual (de modo global)
@@ -32,6 +33,20 @@ extern void globals_set_conveyor_belt(conveyor_belt_t *conveyor_belt);
  * @return conveyor_belt_t* 
  */
 extern conveyor_belt_t *globals_get_conveyor_belt();
+
+/**
+ * @brief Inicia uma fila (de modo global)
+ * 
+ * @param queue 
+ */
+extern void globals_set_queue(queue_t *queue);
+
+/**
+ * @brief Retorna uma fila (de modo global)
+ * 
+ * @return queue_t* 
+ */
+extern queue_t *globals_get_queue();
 
 /**
  * @brief Finaliza todas as variáveis globais.

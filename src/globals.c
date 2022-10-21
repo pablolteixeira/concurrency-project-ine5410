@@ -3,10 +3,11 @@
 #include "globals.h"
 
 
-virtual_clock_t *global_virtual_clock = NULL;
-conveyor_belt_t *global_conveyor_belt = NULL;
+virtual_clock_t* global_virtual_clock = NULL;
+conveyor_belt_t* global_conveyor_belt = NULL;
+queue_t* global_queue = NULL;
 
-void globals_set_virtual_clock(virtual_clock_t *virtual_clock) {
+void globals_set_virtual_clock(virtual_clock_t* virtual_clock) {
     global_virtual_clock = virtual_clock;
 }
 
@@ -14,12 +15,20 @@ virtual_clock_t* globals_get_virtual_clock() {
     return global_virtual_clock;
 }
 
-void globals_set_conveyor_belt(conveyor_belt_t *conveyor_belt) {
+void globals_set_conveyor_belt(conveyor_belt_t* conveyor_belt) {
     global_conveyor_belt = conveyor_belt;
 }
 
 conveyor_belt_t* globals_get_conveyor_belt() {
     return global_conveyor_belt;
+}
+
+void globals_set_queue(queue_t* queue) {
+    global_queue = queue;
+}
+
+queue_t* globals_get_queue() {
+    return global_queue;
 }
 
 /**
