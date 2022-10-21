@@ -11,27 +11,19 @@ void* conveyor_belt_run(void* arg) {
     /* ESSA FUNÇÃO JÁ POSSUÍ A LÓGICA DE FUNCIONAMENTO DA ESTEIRA, E NÃO PRECISA SER EDITADA */
     conveyor_belt_t* self = (conveyor_belt_t*) arg;
     virtual_clock_t* virtual_clock = globals_get_virtual_clock();
-
     while (TRUE) {
         msleep(CONVEYOR_IDLE_PERIOD/virtual_clock->clock_speed_multiplier);
-
-        /* Lock global conveyor_belt */
-        pthread_mutex_lock(&self->_food_slots_mutex);
-
         print_virtual_time(globals_get_virtual_clock());
         fprintf(stdout, GREEN "[INFO]" NO_COLOR " Conveyor belt started moving...\n");
         print_conveyor_belt(self);
 
         msleep(CONVEYOR_MOVING_PERIOD/virtual_clock->clock_speed_multiplier);
-
-        /* Rotate every conveyor slot by 1 index */
+        pthread_mutex_lock(&self->_food_slots_mutex);
         int last = self->_food_slots[0];
         for (int i=0; i<self->_size-1; i++) {
             self->_food_slots[i] = self->_food_slots[i+1];
         }
         self->_food_slots[self->_size-1] = last;
-
-        /* Unlock global conveyor belt */
         pthread_mutex_unlock(&self->_food_slots_mutex);
 
         print_virtual_time(globals_get_virtual_clock());

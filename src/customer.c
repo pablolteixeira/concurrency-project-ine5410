@@ -7,30 +7,39 @@
 
 
 void* customer_run(void* arg) {
+    /* MODIFIQUE ESSA FUNÇÃO PARA GARANTIR O COMPORTAMENTO CORRETO E EFICAZ DO CLIENTE */
+    /* NOTAS:
+     * 1. A PRIMEIRA AÇÃO REALIZADA SERÁ SENTAR-SE EM ALGUMA POSIÇÃO LIVRE DA ESTEIRA
+     * 2. APÓS SENTAR-SE, O CLIENTE IRÁ COMEÇAR A PEGAR E COMER OS SUSHIS DA ESTEIRA
+     * 3. O CLIENTE SÓ PODE PEGAR UM PRATO QUANDO A ESTEIRA ESTIVER PARADA
+     * 4. O CLIENTE SÓ PEGARÁ PRATOS CASO ELE DESEJE-OS, INFORMAÇÃO CONTIDA NO ARRAY self->_wishes[..]
+     * 5. APÓS CONSUMIR TODOS OS PRATOS DESEJADOS, O CLIENTE DEVERÁ SAIR DA ESTEIRA
+     * 6. CUIDADO COM ERROS DE CONCORRÊNCIA
+    */ 
     customer_t* self = (customer_t*) arg;
-    //conveyor_belt_t* conveyor_belt = globals_get_conveyor();
-    //orders_queue* orders_queue = globals_get_orders_queue();
-    
-    //customer_seat(self);
-    //customer_eat_sushi(self);
-    //customer_drink_sake(self);
-    //customer_leave(self);
+    conveyor_belt_t* conveyor_belt = globals_get_conveyor_belt();
 
     pthread_exit(NULL);
 }
 
 void customer_seat(customer_t* self) {
     /* INSIRA SUA LÓGICA AQUI */
+    conveyor_belt_t* conveyor_belt = globals_get_conveyor_belt();
+}
+
+void customer_pick_food(int food_slot) {
+    /* INSIRA SUA LÓGICA AQUI */
 }
 
 void customer_eat(customer_t* self, enum menu_item food) {
     /* INSIRA SUA LÓGICA AQUI */
+    conveyor_belt_t* conveyor_belt = globals_get_conveyor_belt();
 }
 
 void customer_leave(customer_t* self) {
     /* INSIRA SUA LÓGICA AQUI */
+    conveyor_belt_t* conveyor_belt = globals_get_conveyor_belt();
 }
-
 
 customer_t* customer_init() {
     customer_t* self = malloc(sizeof(customer_t));
@@ -38,17 +47,13 @@ customer_t* customer_init() {
         fprintf(stdout, RED "[ERROR] Bad malloc() at `customer_t* customer_init()`.\n" NO_COLOR);
         exit(EXIT_FAILURE);
     }
-
     self->_id = rand() % 1000;
     self->_is_drinking = rand() % 2;
     for (int i=0; i<=4; i++) {
-        /* Generate a desired random amount for each menu item */
-        self->_wishes[i] = (rand() % (MAXIMUM - MINIMUM + 1));
+        self->_wishes[i] = (rand() % 4);
     }
     self->_seat_position = -1;
-
     pthread_create(&self->thread, NULL, customer_run, (void *) self);
-
     return self;
 }
 

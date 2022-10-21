@@ -6,12 +6,6 @@
 
 
 /**
- * @brief Definição de constantes booleanas.
-*/
-#define FALSE                    0
-#define TRUE                     1
-
-/**
  * @brief Definição de unidades de tempo úteis para o relógio virtual.
 */
 #define DAY                      86400
@@ -24,7 +18,6 @@
 */
 typedef struct virtual_clock {
     pthread_t thread;
-    pthread_cond_t closing_time_cond_var;
     unsigned int clock_speed_multiplier;
     unsigned int opening_time;
     unsigned int closing_time;

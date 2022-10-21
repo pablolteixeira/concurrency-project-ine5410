@@ -3,12 +3,6 @@
 
 
 /**
- * @brief Máximo e mínimo de pratos desejados
-*/
-#define MINIMUM                  0
-#define MAXIMUM                  2
-
-/**
  * @brief Pratos do Sushi Shop.
 */
 enum menu_item {

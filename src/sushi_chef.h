@@ -16,10 +16,10 @@ typedef struct sushi_chef {
     pthread_t thread;
 } sushi_chef_t;
 
-void seat_at_conveyor_slot(sushi_chef_t* self, conveyor_belt_t* conveyor);
-void sushi_chef_leave_seat(sushi_chef_t* self, conveyor_belt_t* conveyor);
-void sushi_chef_place_food(sushi_chef_t* self, enum menu_item dish);
+void sushi_chef_seat(sushi_chef_t* self);
 void sushi_chef_prepare_food(sushi_chef_t* self, enum menu_item menu_item);
+void sushi_chef_place_food(sushi_chef_t* self, enum menu_item dish);
+void sushi_chef_leave(sushi_chef_t* self);
 
 sushi_chef_t* sushi_chef_init();
 void* sushi_chef_run(void* arg);
