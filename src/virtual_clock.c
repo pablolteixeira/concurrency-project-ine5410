@@ -7,13 +7,12 @@
 
 
 void* virtual_clock_run(void* arg) {
-    /* ESSA FUNÇÃO JÁ POSSUÍ A LÓGICA BÁSICA DE FUNCIONAMENTO DO RELÓGIO VIRTUAL, ADICIONE A LÓGICA 
-       NECESSÁRIA PARA REALIZAR O FECHAMENTO ADEQUADO DO SUSHI SHOP */
+    /* ESSA FUNÇÃO JÁ POSSUÍ A LÓGICA BÁSICA DE FUNCIONAMENTO DO RELÓGIO VIRTUAL */
     virtual_clock_t* self = (virtual_clock_t*) arg;
     while (TRUE) {
         if (self->current_time >= self->closing_time) {
             print_virtual_time(self);
-            fprintf(stdout, GREEN "[INFO]" NO_COLOR " It's closing time!!!\n");
+            fprintf(stdout, GREEN "[INFO]" RED " RESTAURANT IS CLOSED!!!\n");
         }
         self->current_time += 1;
         msleep(1000/self->clock_speed_multiplier);

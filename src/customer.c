@@ -15,33 +15,86 @@ void* customer_run(void* arg) {
      * 3. O CLIENTE SÓ PODE PEGAR UM PRATO QUANDO A ESTEIRA ESTIVER PARADA
      * 4. O CLIENTE SÓ PEGARÁ PRATOS CASO ELE DESEJE-OS, INFORMAÇÃO CONTIDA NO ARRAY self->_wishes[..]
      * 5. APÓS CONSUMIR TODOS OS PRATOS DESEJADOS, O CLIENTE DEVERÁ SAIR DA ESTEIRA
-     * 6. CUIDADO COM ERROS DE CONCORRÊNCIA
+     * 6. QUANTO O RESTAURANTE FECHAR, O CLIENTE DEVERÁ SAIR IMEDIATAMENTE DA ESTEIRA. CASO ELE ESTEJE
+     *    NO PROCESSO DE COMER ALGUM ITEM, ELE DEVE TERMINAR DE COMER E SAIR IMEDIATAMENTE EM SEGUIDA.
+     * 7. CUIDADO COM ERROS DE CONCORRÊNCIA
     */ 
     customer_t* self = (customer_t*) arg;
-    //conveyor_belt_t* conveyor_belt = globals_get_conveyor_belt();
 
     /* INSIRA SUA LÓGICA AQUI */
     msleep(1000000);
     pthread_exit(NULL);
 }
 
-void customer_seat(customer_t* self) {
-    conveyor_belt_t* conveyor_belt = globals_get_conveyor_belt();
-
-    /* INSIRA SUA LÓGICA AQUI */
-}
-
 void customer_pick_food(int food_slot) {
     /* INSIRA SUA LÓGICA AQUI */
+    /* NOTAS:
+     * 1. LEMBRE-SE: O CLIENTE SÓ PODE COMEÇAR A PEGAR COMIDA APÓS ESTAR SENTADO EM UMA VAGA
+     *    DA ESTEIRA. O VALOR customer_t->_seat_position É ATUALIZADO PELO HOSTESS.
+     * 2. O CLIENTE PODE PEGAR COMIDA DE TRÊS POSSÍVEIS SLOTS: i-1, i, i+1, ONDE i É O ÍNDICE 
+     *    POSICIONAL DO CLIENTE NA ESTEIRA.
+     * 3. CUIDADO COM PROBLEMAS DE SINCRONIZAÇÃO!
+    */
 }
 
 void customer_eat(customer_t* self, enum menu_item food) {
     /* INSIRA SUA LÓGICA AQUI */
-    conveyor_belt_t* conveyor_belt = globals_get_conveyor_belt();
+    /* NOTAS:
+     * 1. LEMBRE-SE DE DECREMENTAR OS ITENS DA LISTA DE DESEJOS DO CLIENTE CONFORME ELE CONSUMIR AS COMIDAS!
+    */
+
+
+    /* NÃO EDITE O CONTEÚDO ABAIXO */
+    virtual_clock_t* global_clock = globals_get_virtual_clock();
+    switch (food) {
+        case Sushi:
+            print_virtual_time(globals_get_virtual_clock());
+            fprintf(stdout, GREEN "[INFO]" NO_COLOR " Customer %d started eating Sushi!\n", self->_id);
+            msleep(SUSHI_PREP_TIME/global_clock->clock_speed_multiplier);
+            print_virtual_time(globals_get_virtual_clock());
+            fprintf(stdout, GREEN "[INFO]" NO_COLOR " Customer %d finished eating Sushi!\n", self->_id);
+            break;
+        case Dango:
+            print_virtual_time(globals_get_virtual_clock());
+            fprintf(stdout, GREEN "[INFO]" NO_COLOR " Customer %d started eating Dango!\n", self->_id);
+            msleep(DANGO_PREP_TIME/global_clock->clock_speed_multiplier);
+            print_virtual_time(globals_get_virtual_clock());
+            fprintf(stdout, GREEN "[INFO]" NO_COLOR " Customer %d finished eating Dango!\n", self->_id);
+            break;
+        case Ramen:
+            print_virtual_time(globals_get_virtual_clock());
+            fprintf(stdout, GREEN "[INFO]" NO_COLOR " Customer %d started eating Ramen!\n", self->_id);
+            msleep(RAMEN_PREP_TIME/global_clock->clock_speed_multiplier);
+            print_virtual_time(globals_get_virtual_clock());
+            fprintf(stdout, GREEN "[INFO]" NO_COLOR " Customer %d finished eating Ramen!\n", self->_id);
+            break;
+        case Onigiri:
+            print_virtual_time(globals_get_virtual_clock());
+            fprintf(stdout, GREEN "[INFO]" NO_COLOR " Customer %d started eating Onigiri!\n", self->_id);
+            msleep(ONIGIRI_PREP_TIME/global_clock->clock_speed_multiplier);
+            print_virtual_time(globals_get_virtual_clock());
+            fprintf(stdout, GREEN "[INFO]" NO_COLOR " Customer %d finished eating Onigiri!\n", self->_id);
+            break;
+        case Tofu:
+            print_virtual_time(globals_get_virtual_clock());
+            fprintf(stdout, GREEN "[INFO]" NO_COLOR " Customer %d started eating Tofu!\n", self->_id);
+            msleep(TOFU_PREP_TIME/global_clock->clock_speed_multiplier);
+            print_virtual_time(globals_get_virtual_clock());
+            fprintf(stdout, GREEN "[INFO]" NO_COLOR " Customer %d finished eating Tofu!\n", self->_id);
+            break; 
+        default:
+            fprintf(stdout, RED "[ERROR] Invalid menu_item variant passed to `customer_eat()`.\n" NO_COLOR);
+            exit(EXIT_FAILURE);
+    }
 }
 
 void customer_leave(customer_t* self) {
     /* INSIRA SUA LÓGICA AQUI */
+    /* NOTAS:
+     * 1. LEMBRE-SE: O CLIENTE DEVERÁ SAIR DA ESTEIRA (ATUALIZAR O VALOR DO SEAT GLOBAL NO CONVEYOR)
+     *    SOMENTE APÓS TER CONSUMIDO TODOS OS ITENS DA SUA LISTA DE DESEJOS, OU QUANDO O RESTAURANTE
+     *    FECHAR.
+    */
     conveyor_belt_t* conveyor_belt = globals_get_conveyor_belt();
 }
 
