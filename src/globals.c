@@ -3,6 +3,16 @@
 #include "globals.h"
 
 
+/*
+    VOCÊ DEVE CRIAR VARIÁVEIS GLOBAIS PARA ARMAZENAR DADOS SOBRE A SIMULAÇÃO.
+    NOTAS:
+    1.  OS SEGUINTES DADOS DEVEM SER ARMAZENADOS E PRINTADOS AO FIM DA SIMULAÇÃO:
+        a. Quantidade de clientes que sentaram-se no conveyor e consumiram todos os itens desejados
+        b. Quantidades produzidas de cada alimento
+        c. Quantidades consumidas de cada alimento
+    2.  SIGA OS EXEMPLOS DE VARIÁVEIS GLOBAIS JÁ EXISTENTES NESSE ARQUIVO PARA CRIAR AS NOVAS.
+*/
+
 virtual_clock_t* global_virtual_clock = NULL;
 conveyor_belt_t* global_conveyor_belt = NULL;
 queue_t* global_queue = NULL;

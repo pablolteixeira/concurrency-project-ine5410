@@ -8,7 +8,7 @@
 
 
 void* conveyor_belt_run(void* arg) {
-    /* ESSA FUNÇÃO JÁ POSSUÍ A LÓGICA DE FUNCIONAMENTO DA ESTEIRA, E NÃO PRECISA SER EDITADA */
+    /* NÃO PRECISA ALTERAR ESSA FUNÇÃO */
     conveyor_belt_t* self = (conveyor_belt_t*) arg;
     virtual_clock_t* virtual_clock = globals_get_virtual_clock();
     while (TRUE) {
@@ -34,6 +34,7 @@ void* conveyor_belt_run(void* arg) {
 }
 
 conveyor_belt_t* conveyor_belt_init(config_t* config) {
+    /* NÃO PRECISA ALTERAR ESSA FUNÇÃO */
     conveyor_belt_t* self = malloc(sizeof(conveyor_belt_t));
     if (self == NULL) {
         fprintf(stdout, RED "[ERROR] Bad malloc() at `conveyor_belt_t* conveyor_belt_init()`.\n" NO_COLOR);
@@ -54,6 +55,7 @@ conveyor_belt_t* conveyor_belt_init(config_t* config) {
 }
 
 void conveyor_belt_finalize(conveyor_belt_t* self) {
+    /* NÃO PRECISA ALTERAR ESSA FUNÇÃO */
     pthread_join(self->thread, NULL);
     pthread_mutex_destroy(&self->_seats_mutex);
     pthread_mutex_destroy(&self->_food_slots_mutex);
@@ -61,6 +63,7 @@ void conveyor_belt_finalize(conveyor_belt_t* self) {
 }
 
 void print_conveyor_belt(conveyor_belt_t* self) {
+    /* NÃO PRECISA ALTERAR ESSA FUNÇÃO */
     print_virtual_time(globals_get_virtual_clock());
     fprintf(stdout, BROWN "[DEBUG] Conveyor Belt " NO_COLOR "{\n");
     fprintf(stdout, BROWN "    _size" NO_COLOR ": %d\n", self->_size);

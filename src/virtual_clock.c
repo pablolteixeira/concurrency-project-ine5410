@@ -21,6 +21,7 @@ void* virtual_clock_run(void* arg) {
 }
 
 virtual_clock_t* virtual_clock_init(config_t* config) {
+    /* NÃO PRECISA ALTERAR ESSA FUNÇÃO */
     virtual_clock_t* self = malloc(sizeof(virtual_clock_t));
     if (self == NULL) {
         fprintf(stdout, RED "[ERROR] Bad malloc() at `virtual_clock_t* virtual_clock_init()`.\n" NO_COLOR);
@@ -35,31 +36,38 @@ virtual_clock_t* virtual_clock_init(config_t* config) {
 }
 
 void virtual_clock_finalize(virtual_clock_t* self) {
+    /* NÃO PRECISA ALTERAR ESSA FUNÇÃO */
     pthread_join(self->thread, NULL);
     free(self);
 }
 
 unsigned int read_hours(unsigned int value) {
+    /* NÃO PRECISA ALTERAR ESSA FUNÇÃO */
     return value / HOUR;
 }
 
 unsigned int read_minutes(unsigned int value) {
+    /* NÃO PRECISA ALTERAR ESSA FUNÇÃO */
     return (value / MINUTE) % MINUTE;
 }
 
 unsigned int read_seconds(unsigned int value) {
+    /* NÃO PRECISA ALTERAR ESSA FUNÇÃO */
     return value % MINUTE;
 }
 
 unsigned int read_ms(unsigned int value) {
+    /* NÃO PRECISA ALTERAR ESSA FUNÇÃO */
     return value % MS;
 }
 
 void print_virtual_time(virtual_clock_t* self) {
+    /* NÃO PRECISA ALTERAR ESSA FUNÇÃO */
     fprintf(stdout, MAGENTA "[%02dh%02dm%02ds %04dms] " NO_COLOR, read_hours(self->current_time), read_minutes(self->current_time), read_seconds(self->current_time), read_ms(self->current_time));
 }
 
 int msleep(long msec) {
+    /* NÃO PRECISA ALTERAR ESSA FUNÇÃO */
     struct timespec ts;
     int res;
     if (msec < 0) {
