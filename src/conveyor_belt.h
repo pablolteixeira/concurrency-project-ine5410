@@ -9,7 +9,7 @@
 #define CONVEYOR_MOVING_PERIOD   5000
 
 #define EMPTY_SLOT               "__"
-#define SUSHI_CHEF               "🧑‍🍳"
+#define SUSHI_CHEF               "🍳"
 #define CUSTOMER                 "😋"
 
 /**
