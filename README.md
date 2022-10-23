@@ -38,7 +38,7 @@ Para mais detalhes, execute:
 
 1. A esteira de Sushi (`conveyor_belt`) possui dois arrays de inteiros representando os slots de comida e os assentos.
 2. Periodicamente, os slots de comida da esteira movem-se (ver arquivo `conveyor_belt.c`).
-3. A posição dos assentos permanecem fixos durante a simulação.
+3. A posição dos assentos permanece fixa durante a simulação.
 4. Todos os assentos e slots de comida iniciam-se vazios quando o restaurante abre.
 
 ### Sushi Chef
@@ -52,7 +52,7 @@ Para mais detalhes, execute:
 
 1. O Hostess (`hostess`) deverá observar os assentos vagos na esteira e guiar os clientes (`customer`) da fila (`queue`) conforme eles chegam (ordem FIFO). A abstração dada para a fila possui um método já implementado para gerar clientes aleatóriamente durante a simulação.
 2. Guiar um cliente para a esteira significa posicioná-lo em um assento da esteira global e removê-lo da fila de entrada.
-3. Quando o restaurante fechar, o Hostess deve imediatamente parar de guiar novos clientes para a esteira e finalizar (dealocar) todos os clientes que restarem na fila.
+3. Quando o restaurante fechar, o Hostess deve imediatamente parar de guiar novos clientes para a esteira e finalizar (desalocar) todos os clientes que restarem na fila.
 
 ### Customer
 
