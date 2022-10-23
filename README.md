@@ -1,20 +1,23 @@
 # Trabalho 1 - Programação Concorrente - ine5410 (2022.2) - Sushi Shop Simulator
 
-## Arquivos dados
+## Visão geral
 
-O objetivo deste trabalho é construir um simulador para um restaurante de Sushi na esteira. 
+O Trabalho 1 (T1) da disciplina de Programação Concorrente consiste em construir um simulador de um restaurante de comida japonesa. O simulador deve implementar o comportamento de clientes que vão a um Sushi Shop para comer. Ao entrarem no restaurante, os clientes se sentam ao redor de uma mesa que possui uma esteira rolante. Os sushi chefs fazem os sushis e os colocam na esteira. Quando um cliente deseja comer um sushi que está passando na esteira próximo a ele, ele pega o alimento e come. Após comer todos os sushis que desejava, o cliente vai embora do restaurante.
+
+## Estrutura do projeto
+
 Você recebeu um esqueleto de código com funcionalidades essenciais da simulação, incluindo as principais abstrações:
 
-- *conveyor_belt.c* representando a esteira de comida japonesa e os assentos onde ficarão os clientes
-- *customer.c* representando os clientes do Sushi Shop
-- *globals.c* contendo definições de variáveis globais da simulação
-- *hostess.c* representando um funcionário da recepção do restauraute, que irá guiar os novos clientes para a esteira
-- *menu.h* com as definições dos pratos disponíveis
-- *queue.c* representando uma fila de clientes
-- *sushi_chef.c* representando os cozinheiros do restaurante
-- *virtual_clock.c* contendo um contador de tempo para a simulação
+- *conveyor_belt.c* representando a esteira de comida japonesa e os assentos onde ficarão os clientes;
+- *customer.c* representando os clientes do Sushi Shop;
+- *globals.c* contendo definições de variáveis globais da simulação;
+- *hostess.c* representando um funcionário da recepção do restauraute, que irá guiar os novos clientes para a esteira;
+- *menu.h* com as definições dos pratos disponíveis;
+- *queue.c* representando uma fila de clientes;
+- *sushi_chef.c* representando os cozinheiros do restaurante;
+- *virtual_clock.c* contendo um contador de tempo para a simulação.
 
-O código para cada abstração é dado com algumas partes críticas faltando. Você deve garantir o funcionamento correto esperado para cada elemento da simulação: Customer, Sushi Chef, Hostess, etc. Cuidados devem ser tomados para que não ocorram deadlocks, condições de corrida, nem outros problemas de concorrência. Alguns comentários foram deixados pelo código-fonte para auxiliar, entretanto vocês podem utilizar as estratégias que melhor desejarem para completar a simulação --- só não é permitido remover ou deletar as funções dadas!
+O código para cada abstração é dado com algumas partes críticas faltando. Você deve garantir o funcionamento correto esperado para cada elemento da simulação: Customer, Sushi Chef, Hostess, etc. Cuidados devem ser tomados para que não ocorram deadlocks, condições de corrida, nem outros problemas de concorrência. Alguns comentários foram deixados pelo código-fonte para auxiliar, entretanto vocês podem utilizar as estratégias que melhor desejarem para completar a simulação --- só não é permitido remover as funções dadas!
 
 ## Compilando o código
 
