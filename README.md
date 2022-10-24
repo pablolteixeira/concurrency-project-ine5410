@@ -4,6 +4,10 @@
 
 O Trabalho 1 (T1) da disciplina de Programação Concorrente consiste em construir um simulador de um restaurante de comida japonesa. O simulador deve implementar o comportamento de clientes que vão a um Sushi Shop para comer. Ao entrarem no restaurante, os clientes se sentam ao redor de uma mesa que possui uma esteira rolante. Os sushi chefs fazem os sushis e os colocam na esteira. Quando um cliente deseja comer um sushi que está passando na esteira próximo a ele, ele pega o alimento e come. Após comer todos os sushis que desejava, o cliente vai embora do restaurante.
 
+Temos na imagem abaixo um esquemático dos atores e componentes importantes da simulação:
+
+![sushi shop overview](/docs/images/overview.png)
+
 ## Estrutura do projeto
 
 Você recebeu um esqueleto de código com funcionalidades essenciais da simulação, incluindo as principais abstrações:
