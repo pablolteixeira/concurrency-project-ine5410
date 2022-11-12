@@ -17,12 +17,19 @@ int hostess_check_for_a_free_conveyor_seat() {
     */
     conveyor_belt_t* conveyor = globals_get_conveyor_belt();
     virtual_clock_t* virtual_clock = globals_get_virtual_clock();
-    
+    sem_t* semaphore = global_get_semaphore_conveyor();
+    pthread_mutex_t mutex_conveyor_enter;
+
+    pthread_mutex_init(&mutex_conveyor_enter, NULL);
+
     print_virtual_time(globals_get_virtual_clock());
     fprintf(stdout, GREEN "[INFO]" NO_COLOR " O Hostess está procurando por um assento livre...\n");
     print_conveyor_belt(conveyor);
 
     while (TRUE) {
+        sem_wait(&semaphore);
+
+        pthread_mutex_lock(&mutex_conveyor_enter);
         for (int i=0; i<conveyor->_size; i++) {
             if (conveyor->_seats[i] == -1 && i !=0) {  // Atenção à regra! (-1 = livre, 0 = sushi_chef, 1 = customer)
                 print_virtual_time(globals_get_virtual_clock());
@@ -30,11 +37,15 @@ int hostess_check_for_a_free_conveyor_seat() {
                 return i;
             }
         }
+        pthread_mutex_unlock(&mutex_conveyor_enter);
+
         msleep(120000/virtual_clock->clock_speed_multiplier);  // Não remova esse sleep!
     }
+
+    pthread_mutex_destroy(&mutex_conveyor_enter);
 }
 
-void hostess_guide_first_in_line_customer_to_conveyor_seat(int seat) {
+void hostess_guide_first_in_line_customer_to_conveyor_seat(int seat, pthread_mutex_t* mutex_conveyor_seat) {
     /* 
         MODIFIQUE ESSA FUNÇÃO PARA GARANTIR O COMPORTAMENTO CORRETO E EFICAZ DO HOSTESS.
         NOTAS:
@@ -46,13 +57,19 @@ void hostess_guide_first_in_line_customer_to_conveyor_seat(int seat) {
         2.  CUIDADO COM PROBLEMAS DE SINCRONIZAÇÃO!
         3.  NÃO REMOVA OS PRINTS!
     */
+
     conveyor_belt_t* conveyor = globals_get_conveyor_belt();
     queue_t* queue = globals_get_queue();
+    sem_t* semaphore = global_get_semaphore_conveyor();
 
+
+    pthread_mutex_lock(&mutex_conveyor_seat);
     customer_t* customer = queue_remove(queue);
     conveyor->_seats[seat] = 1;
     customer->_seat_position=seat;
+    pthread_mutex_unlock(&mutex_conveyor_seat);
 
+    sem_post(&semaphore);
     print_virtual_time(globals_get_virtual_clock());
     fprintf(stdout, GREEN "[INFO]" NO_COLOR " O Hostess levou o cliente %d para o assento %d!\n", customer->_id, seat);
     print_conveyor_belt(conveyor);    
@@ -72,14 +89,25 @@ void* hostess_run() {
     virtual_clock_t* virtual_clock = globals_get_virtual_clock();
     queue_t* queue = globals_get_queue();
     int sushi_shop_fechado = FALSE;
+    pthread_mutex_t mutex_conveyor_seat;
+
+    pthread_mutex_init(&mutex_conveyor_seat, NULL);
 
     while (sushi_shop_fechado == FALSE) {  // Adicione a lógica para que o Hostess realize o fechamento do Sushi Shop!
         if (queue->_length > 0) {
             int seat = hostess_check_for_a_free_conveyor_seat();
-            hostess_guide_first_in_line_customer_to_conveyor_seat(seat);
+            hostess_guide_first_in_line_customer_to_conveyor_seat(seat, &mutex_conveyor_seat);
         }
         msleep(3000/virtual_clock->clock_speed_multiplier);  // Não remova esse sleep!
     }
+
+    if (sushi_shop_fechado) {
+        while (queue->_length > 0) {
+            queue_remove
+        }
+    }
+
+    pthread_mutex_destroy(&mutex_conveyor_seat);
 
     pthread_exit(NULL);
 }

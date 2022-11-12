@@ -1,7 +1,7 @@
 #ifndef __GLOBALS_H__
 #define __GLOBALS_H__
 
-
+#include <semaphore.h>
 #include "conveyor_belt.h"
 #include "virtual_clock.h"
 #include "queue.h"
@@ -47,6 +47,13 @@ extern void globals_set_queue(queue_t *queue);
  * @return queue_t* 
  */
 extern queue_t *globals_get_queue();
+
+/**
+ * @brief Retorna o semaforo dos assentos
+ * 
+ * @return sem_t* 
+ */
+extern sem_t* global_get_semaphore_conveyor();
 
 /**
  * @brief Finaliza todas as variáveis globais.
