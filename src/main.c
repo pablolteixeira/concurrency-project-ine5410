@@ -20,7 +20,7 @@ int main (int argc, char** argv) {
     globals_set_virtual_clock(virtual_clock_init(&config));
 
     /* Setup sushi conveyor belt */
-    globals_set_conveyor_belt(conveyor_xbelt_init(&config));
+    globals_set_conveyor_belt(conveyor_belt_init(&config));
 
     /* Init the Sushi Chef */
     sushi_chef_t* sushi_chef = sushi_chef_init();

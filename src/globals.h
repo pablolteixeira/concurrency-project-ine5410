@@ -56,6 +56,20 @@ extern queue_t *globals_get_queue();
 extern sem_t* global_get_semaphore_conveyor();
 
 /**
+ * @brief Retorna o mutex usado para entrar no conveyor
+ * 
+ * @return pthread_mutex_t* 
+ */
+extern pthread_mutex_t* global_get_mutex_conveyor_enter();
+
+/**
+ * @brief Retorna o mutex usado para escolher o seat no conveyor
+ * 
+ * @return pthread_mutex_t* 
+ */
+extern pthread_mutex_t* global_get_mutex_conveyor_seat();
+
+/**
  * @brief Finaliza todas as variáveis globais.
  * 
  */
