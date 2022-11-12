@@ -81,24 +81,23 @@ void sushi_chef_place_food(sushi_chef_t* self, enum menu_item dish) {
     /* 
         MODIFIQUE ESSA FUNÇÃO PARA GARANTIR O COMPORTAMENTO CORRETO E EFICAZ DO SUSHI CHEF.
         NOTAS:
-        1.  O CHEF SÓ PODE ADICIONAR COMIDA NO SLOT À SUA FRENTE
-        2.  O CHEF SÓ PODE ADICIONAR COMIDA EM UM SLOT VAGO
-        3.  O CHEF DEVE ESPERAR ATÉ QUE UM SLOT VAGO APAREÇA PARA POSICIONAR O PRATO NA ESTEIRA
-        4.  CUIDADO COM ERROS DE CONCORRÊNCIA
-        5.  NÃO REMOVA OS PRINTS
+        1. OK  O CHEF SÓ PODE ADICIONAR COMIDA NO SLOT À SUA FRENTE
+        2. OK O CHEF SÓ PODE ADICIONAR COMIDA EM UM SLOT VAGO
+        3. OK O CHEF DEVE ESPERAR ATÉ QUE UM SLOT VAGO APAREÇA PARA POSICIONAR O PRATO NA ESTEIRA
+        4. OK CUIDADO COM ERROS DE CONCORRÊNCIA
+        5. OK NÃO REMOVA OS PRINTS
     */ 
     conveyor_belt_t* conveyor_belt = globals_get_conveyor_belt();
     print_virtual_time(globals_get_virtual_clock());
     fprintf(stdout, GREEN "[INFO]" NO_COLOR " Sushi Chef %d wants to place %u at conveyor->_foot_slot[%d]!\n", self->_id, dish, self->_seat_position);
-
-    /* INSIRA SUA LÓGICA AQUI */
+    
+    while (conveyor_belt->_food_slots[self->_seat_position] >= 1 && conveyor_belt->_food_slots[self->_seat_position] <= 5) {
+        NULL;
+    }
 
     conveyor_belt->_food_slots[self->_seat_position] = dish;
     print_virtual_time(globals_get_virtual_clock());
     fprintf(stdout, GREEN "[INFO]" NO_COLOR " Sushi Chef %d placed %u at conveyor->_foot_slot[%d]!\n", self->_id, dish, self->_seat_position);
-
-    /* INSIRA SUA LÓGICA AQUI */
-
 }
 
 void sushi_chef_prepare_food(sushi_chef_t* self, enum menu_item menu_item) {
