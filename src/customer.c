@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <pthread.h>
 
 #include "virtual_clock.h"
 #include "customer.h"
@@ -22,10 +23,25 @@ void* customer_run(void* arg) {
         8.  LEMBRE-SE DE TOMAR CUIDADO COM ERROS DE CONCORRÊNCIA!
     */ 
     customer_t* self = (customer_t*) arg;
+    virtual_clock_t* virtual_clock = globals_get_virtual_clock();
+    pthread_mutex_t* mutex_eat = global_get_mutex_custumer_eat();
+    pthread_mutex_t* mutex_pick_food = global_get_mutex_custumer_pick_food();
 
-    /* INSIRA SUA LÓGICA AQUI */
-    
-    msleep(1000000);  // REMOVA ESTE SLEEP APÓS IMPLEMENTAR SUA SOLUÇÃO!
+    pthread_mutex_init(mutex_eat, NULL);
+
+    pthread_mutex_init(mutex_pick_food, NULL);
+
+    while (TRUE) {
+        if (virtual_clock->current_time > virtual_clock->closing_time) {
+            break;
+        }
+        
+    }
+
+    pthread_mutex_destroy(mutex_eat);
+
+    pthread_mutex_destroy(mutex_pick_food);
+
     pthread_exit(NULL);
 }
 
@@ -42,6 +58,12 @@ void customer_pick_food(int food_slot) {
     */
    
     /* INSIRA SUA LÓGICA AQUI */
+    pthread_mutex_t* mutex_pick_food = global_get_mutex_custumer_pick_food();
+    conveyor_belt_t* conveyor = globals_get_conveyor_belt();
+
+    pthread_mutex_lock(mutex_pick_food);
+    conveyor->_food_slots[food_slot] = -1;
+    pthread_mutex_unlock(mutex_pick_food);
 }
 
 void customer_eat(customer_t* self, enum menu_item food) {
@@ -56,6 +78,11 @@ void customer_eat(customer_t* self, enum menu_item food) {
     */
 
     /* INSIRA SUA LÓGICA AQUI */
+    pthread_mutex_t* mutex_eat = global_get_mutex_custumer_eat();
+
+    pthread_mutex_lock(mutex_eat);
+    self->_wishes[food] -= 1;
+    pthread_mutex_unlock(mutex_eat);
 
     /* NÃO EDITE O CONTEÚDO ABAIXO */
     virtual_clock_t* global_clock = globals_get_virtual_clock();
@@ -110,7 +137,9 @@ void customer_leave(customer_t* self) {
     */
     conveyor_belt_t* conveyor_belt = globals_get_conveyor_belt();
 
-    conveyor_belt->_seats[self->_seat_position] = EMPTY_SLOT;
+    pthread_mutex_lock(&conveyor_belt->_seats_mutex);
+    conveyor_belt->_seats[self->_seat_position] = -1;
+    pthread_mutex_unlock(&conveyor_belt->_seats_mutex);
 
     customer_finalize(self);
 }

@@ -77,6 +77,19 @@ extern pthread_mutex_t* global_get_mutex_conveyor_enter();
  */
 extern pthread_mutex_t* global_get_mutex_conveyor_seat();
 
+/**
+ * @brief Retorna o mutex usado para o customer comer
+ * 
+ * @return pthread_mutex_t* 
+ */
+extern pthread_mutex_t* global_get_mutex_custumer_eat();
+
+/**
+ * @brief Retorna o mutex usado para o customer comer
+ * 
+ * @return pthread_mutex_t* 
+ */
+extern pthread_mutex_t* global_get_mutex_custumer_pick_food();
 
 /**
  * @brief Retorna o semaforo dos pratos(dishes - sushichef)

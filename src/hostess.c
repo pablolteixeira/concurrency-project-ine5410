@@ -64,7 +64,8 @@ void hostess_guide_first_in_line_customer_to_conveyor_seat(int seat) {
     pthread_mutex_lock(mutex_conveyor_seat);
     customer_t* customer = queue_remove(queue);
     conveyor->_seats[seat] = 1;
-    customer->_seat_position=seat;
+    printf("POSTION SEAT -> %d\n", seat);
+    customer->_seat_position = seat;
     pthread_mutex_unlock(mutex_conveyor_seat);
 
     sem_post(semaphore);
@@ -100,6 +101,9 @@ void* hostess_run() {
     pthread_mutex_init(mutex_conveyor_enter, NULL);
     
     while (sushi_shop_fechado == FALSE) {  // Adicione a lógica para que o Hostess realize o fechamento do Sushi Shop!
+        if (virtual_clock->current_time > virtual_clock->closing_time) {
+            sushi_shop_fechado = TRUE;
+        }
         if (queue->_length > 0) {
             int seat = hostess_check_for_a_free_conveyor_seat();
             hostess_guide_first_in_line_customer_to_conveyor_seat(seat);
