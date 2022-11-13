@@ -4,6 +4,7 @@
 #include "sushi_chef.h"
 #include "globals.h"
 #include "menu.h"
+#include <semaphore.h>
 
 
 void* sushi_chef_run(void* arg) {
@@ -18,9 +19,16 @@ void* sushi_chef_run(void* arg) {
     */ 
     sushi_chef_t* self = (sushi_chef_t*) arg;
     virtual_clock_t* global_clock = globals_get_virtual_clock();
+    conveyor_belt_t* conveyor_belt = globals_get_conveyor_belt();
+    sem_t* empty_slot_sem = global_get_empty_slots_sem();
 
+    sem_init(empty_slot_sem, 0, conveyor_belt->_size);
     sushi_chef_seat(self);
+
+    /*fprintf(stdout, GREEN "[closing_time]" NO_COLOR " S => %d !\n", global_clock->closing_time);
+        fprintf(stdout, GREEN "[current_time]" NO_COLOR " S => %d !\n", global_clock->current_time); */
     while (TRUE) {
+        
         enum menu_item next_dish = rand() % 5;
         sushi_chef_prepare_food(self, next_dish);
         sushi_chef_place_food(self, next_dish);
@@ -88,16 +96,20 @@ void sushi_chef_place_food(sushi_chef_t* self, enum menu_item dish) {
         5. OK NÃO REMOVA OS PRINTS
     */ 
     conveyor_belt_t* conveyor_belt = globals_get_conveyor_belt();
+    sem_t* empty_slot_sem = global_get_empty_slots_sem();
+
     print_virtual_time(globals_get_virtual_clock());
     fprintf(stdout, GREEN "[INFO]" NO_COLOR " Sushi Chef %d wants to place %u at conveyor->_foot_slot[%d]!\n", self->_id, dish, self->_seat_position);
     
+    sem_wait(empty_slot_sem);
     while (conveyor_belt->_food_slots[self->_seat_position] >= 1 && conveyor_belt->_food_slots[self->_seat_position] <= 5) {
-        NULL;
+        fprintf(stdout, GREEN "[TRANCADO]");
     }
 
     conveyor_belt->_food_slots[self->_seat_position] = dish;
     print_virtual_time(globals_get_virtual_clock());
     fprintf(stdout, GREEN "[INFO]" NO_COLOR " Sushi Chef %d placed %u at conveyor->_foot_slot[%d]!\n", self->_id, dish, self->_seat_position);
+
 }
 
 void sushi_chef_prepare_food(sushi_chef_t* self, enum menu_item menu_item) {

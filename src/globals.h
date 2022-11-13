@@ -5,6 +5,7 @@
 #include "conveyor_belt.h"
 #include "virtual_clock.h"
 #include "queue.h"
+#include <semaphore.h>
 
 /**
  * @brief Inicia um relógio virtual (de modo global)
@@ -49,6 +50,13 @@ extern void globals_set_queue(queue_t *queue);
 extern queue_t *globals_get_queue();
 
 /**
+
+ * @brief Retorna um empty_slots_sem
+ * 
+ * @return sem_t* 
+ */
+extern sem_t *global_get_empty_slots_sem();
+/*
  * @brief Retorna o semaforo dos assentos
  * 
  * @return sem_t* 
@@ -68,6 +76,7 @@ extern pthread_mutex_t* global_get_mutex_conveyor_enter();
  * @return pthread_mutex_t* 
  */
 extern pthread_mutex_t* global_get_mutex_conveyor_seat();
+
 
 /**
  * @brief Finaliza todas as variáveis globais.

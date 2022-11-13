@@ -2,6 +2,9 @@
 
 #include "globals.h"
 
+#include <semaphore.h>
+
+
 /*
     VOCÊ DEVE CRIAR VARIÁVEIS GLOBAIS PARA ARMAZENAR DADOS SOBRE A SIMULAÇÃO.
     NOTAS:
@@ -19,6 +22,7 @@ pthread_mutex_t global_mutex_conveyor_seat;
 virtual_clock_t* global_virtual_clock = NULL;
 conveyor_belt_t* global_conveyor_belt = NULL;
 queue_t* global_queue = NULL;
+sem_t empty_slots_sem;
 
 void globals_set_virtual_clock(virtual_clock_t* virtual_clock) {
     global_virtual_clock = virtual_clock;
@@ -42,6 +46,11 @@ void globals_set_queue(queue_t* queue) {
 
 queue_t* globals_get_queue() {
     return global_queue;
+}
+
+
+sem_t* global_get_empty_slots_sem() {
+    return &empty_slots_sem;
 }
 
 sem_t* global_get_semaphore_conveyor() {
