@@ -10,7 +10,7 @@ void* customer_run(void* arg) {
     /* 
         MODIFIQUE ESSA FUNÇÃO PARA GARANTIR O COMPORTAMENTO CORRETO E EFICAZ DO CLIENTE.
         NOTAS:
-        1.  A PRIMEIRA AÇÃO REALIZADA SERÁ ESPERAR NA FILA GLOBAL DE CLIENTES, ATÉ QUE O HOSTESS
+        1.  OK A PRIMEIRA AÇÃO REALIZADA SERÁ ESPERAR NA FILA GLOBAL DE CLIENTES, ATÉ QUE O HOSTESS
             GUIE O CLIENTE PARA UM ASSENTO LIVRE.
         2.  APÓS SENTAR-SE, O CLIENTE COMEÇARÁ PEGAR E COMER OS PRATOS DA ESTEIRA.
         3.  O CLIENTE SÓ PODERÁ PEGAR UM PRATO QUANDO A ESTEIRA ESTIVER PARADA.
@@ -22,8 +22,8 @@ void* customer_run(void* arg) {
         8.  LEMBRE-SE DE TOMAR CUIDADO COM ERROS DE CONCORRÊNCIA!
     */ 
     customer_t* self = (customer_t*) arg;
-
-    /* INSIRA SUA LÓGICA AQUI */
+    
+    /* TODO PUT "customer_leave(self);"*/
     
     msleep(1000000);  // REMOVA ESTE SLEEP APÓS IMPLEMENTAR SUA SOLUÇÃO!
     pthread_exit(NULL);
@@ -110,7 +110,19 @@ void customer_leave(customer_t* self) {
     */
     conveyor_belt_t* conveyor_belt = globals_get_conveyor_belt();
 
-    conveyor_belt->_seats[self->_seat_position] = EMPTY_SLOT;
+    while (self->_seat_position == -1) { // WAIT THE CUSTOM SIT DOWN TO REMOVE   TODO EXCLUDE
+        NULL;
+    }
+
+    pthread_mutex_lock(&conveyor_belt->_seats_mutex);
+
+    conveyor_belt->_seats[self->_seat_position] = -1;
+    self->_seat_position = -1;
+
+    print_virtual_time(globals_get_virtual_clock());
+    fprintf(stdout, GREEN "[INFO]" NO_COLOR " The customer %d left the conveyor!\n", self->_id);
+
+    pthread_mutex_unlock(&conveyor_belt->_seats_mutex);
 
     customer_finalize(self);
 }
