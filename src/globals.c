@@ -1,7 +1,9 @@
 #include <stdlib.h>
 
 #include "globals.h"
+
 #include <semaphore.h>
+
 
 /*
     VOCÊ DEVE CRIAR VARIÁVEIS GLOBAIS PARA ARMAZENAR DADOS SOBRE A SIMULAÇÃO.
@@ -12,6 +14,10 @@
         c. Quantidades consumidas de cada alimento
     2.  SIGA OS EXEMPLOS DE VARIÁVEIS GLOBAIS JÁ EXISTENTES NESSE ARQUIVO PARA CRIAR AS NOVAS.
 */
+
+sem_t global_semaphore_conveyor;
+pthread_mutex_t global_mutex_conveyor_enter;
+pthread_mutex_t global_mutex_conveyor_seat;
 
 virtual_clock_t* global_virtual_clock = NULL;
 conveyor_belt_t* global_conveyor_belt = NULL;
@@ -42,8 +48,20 @@ queue_t* globals_get_queue() {
     return global_queue;
 }
 
+
 sem_t* global_get_empty_slots_sem() {
     return &empty_slots_sem;
+
+sem_t* global_get_semaphore_conveyor() {
+    return &global_semaphore_conveyor;
+}
+
+pthread_mutex_t* global_get_mutex_conveyor_enter() {
+    return &global_mutex_conveyor_enter;
+}
+
+pthread_mutex_t* global_get_mutex_conveyor_seat() {
+    return &global_mutex_conveyor_seat;
 }
 
 /**
