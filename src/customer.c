@@ -40,7 +40,7 @@ void customer_pick_food(int food_slot) {
             POSICIONAL DO CLIENTE NA ESTEIRA (O ASSENTO ONDE ELE ESTÁ SENTADO).
         5.  NOTE QUE CLIENTES ADJACENTES DISPUTARÃO OS MESMOS PRATOS. CUIDADO COM PROBLEMAS DE SINCRONIZAÇÃO!
     */
-
+   
     /* INSIRA SUA LÓGICA AQUI */
 }
 
@@ -95,6 +95,7 @@ void customer_eat(customer_t* self, enum menu_item food) {
             print_virtual_time(globals_get_virtual_clock());
             fprintf(stdout, GREEN "[INFO]" NO_COLOR " Customer %d finished eating Tofu!\n", self->_id);
             break; 
+    
         default:
             fprintf(stdout, RED "[ERROR] Invalid menu_item variant passed to `customer_eat()`.\n" NO_COLOR);
             exit(EXIT_FAILURE);
@@ -109,7 +110,9 @@ void customer_leave(customer_t* self) {
     */
     conveyor_belt_t* conveyor_belt = globals_get_conveyor_belt();
 
-    /* INSIRA SUA LÓGICA AQUI */
+    conveyor_belt->_seats[self->_seat_position] = EMPTY_SLOT;
+
+    customer_finalize(self);
 }
 
 customer_t* customer_init() {

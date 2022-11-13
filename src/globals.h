@@ -70,6 +70,12 @@ extern pthread_mutex_t* global_get_mutex_conveyor_enter();
 extern pthread_mutex_t* global_get_mutex_conveyor_seat();
 
 /**
+ * @brief Retorna o semaforo dos pratos(dishes - sushichef)
+ * @return sem_t* 
+ */
+sem_t* global_get_semaphore_sushi_dishes();
+
+/**
  * @brief Finaliza todas as variáveis globais.
  * 
  */

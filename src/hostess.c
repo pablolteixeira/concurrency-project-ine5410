@@ -102,7 +102,6 @@ void* hostess_run() {
     while (sushi_shop_fechado == FALSE) {  // Adicione a lógica para que o Hostess realize o fechamento do Sushi Shop!
         if (queue->_length > 0) {
             int seat = hostess_check_for_a_free_conveyor_seat();
-            printf("Esse é o seat %d\n", seat);
             hostess_guide_first_in_line_customer_to_conveyor_seat(seat);
         }
         msleep(3000/virtual_clock->clock_speed_multiplier);  // Não remova esse sleep!
