@@ -56,7 +56,7 @@ extern queue_t *globals_get_queue();
  * @return sem_t* 
  */
 extern sem_t *global_get_empty_slots_sem();
-
+/*
  * @brief Retorna o semaforo dos assentos
  * 
  * @return sem_t* 

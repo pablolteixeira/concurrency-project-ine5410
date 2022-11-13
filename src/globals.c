@@ -51,6 +51,7 @@ queue_t* globals_get_queue() {
 
 sem_t* global_get_empty_slots_sem() {
     return &empty_slots_sem;
+}
 
 sem_t* global_get_semaphore_conveyor() {
     return &global_semaphore_conveyor;
