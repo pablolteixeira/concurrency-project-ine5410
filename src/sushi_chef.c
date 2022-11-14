@@ -105,19 +105,20 @@ void sushi_chef_place_food(sushi_chef_t* self, enum menu_item dish) {
     */ 
     conveyor_belt_t* conveyor_belt = globals_get_conveyor_belt();
     sem_t* empty_slot_sem = global_get_empty_slots_sem();
+    virtual_clock_t* virtual_clock = globals_get_virtual_clock();
 
     print_virtual_time(globals_get_virtual_clock());
     fprintf(stdout, GREEN "[INFO]" NO_COLOR " Sushi Chef %d wants to place %u at conveyor->_foot_slot[%d]!\n", self->_id, dish, self->_seat_position);
-    
-    sem_wait(empty_slot_sem);
-    while (conveyor_belt->_food_slots[self->_seat_position] >= 0 && conveyor_belt->_food_slots[self->_seat_position] <= 4) {
-        fprintf(stdout, GREEN "[WAITING AN EMPTY SLOT]");
-    }
-    pthread_mutex_lock(&conveyor_belt->_food_slots_mutex);
 
+    while (conveyor_belt->_food_slots[self->_seat_position] >= 0 && conveyor_belt->_food_slots[self->_seat_position] <= 4) {
+        msleep(CONVEYOR_MOVING_PERIOD/virtual_clock->clock_speed_multiplier);
+    }
+
+    pthread_mutex_lock(&conveyor_belt->_food_slots_mutex);
     conveyor_belt->_food_slots[self->_seat_position] = dish;
     print_virtual_time(globals_get_virtual_clock());
     fprintf(stdout, GREEN "[INFO]" NO_COLOR " Sushi Chef %d placed %u at conveyor->_foot_slot[%d]!\n", self->_id, dish, self->_seat_position);
+    
     pthread_mutex_unlock(&conveyor_belt->_food_slots_mutex);
 }
 

@@ -5,6 +5,20 @@
 #include "customer.h"
 #include "globals.h"
 
+int customer_wants_to_eat_this_sushi(customer_t* self, enum menu_item food) {
+    if (food == -1 || self->_wishes[food] == 0) { 
+        return 0;
+    }
+    return 1;
+}
+
+int customer_is_satisfied(int wishes[5]) {
+    /* if the client has already eaten use the -1 flag */
+    for (int i = 0; i < 5; i++) {
+        if (wishes[i] > 0) return 0;
+    };
+    return 1;
+};
 
 void* customer_run(void* arg) {
     /* 
@@ -21,15 +35,26 @@ void* customer_run(void* arg) {
             SAIR IMEDIATAMENTE DA ESTEIRA.
         8.  LEMBRE-SE DE TOMAR CUIDADO COM ERROS DE CONCORRÊNCIA!
     */ 
+    conveyor_belt_t* conveyor = globals_get_conveyor_belt();
     customer_t* self = (customer_t*) arg;
-
+    virtual_clock_t* virtual_clock = globals_get_virtual_clock();
     /* INSIRA SUA LÓGICA AQUI */
-    
-    msleep(1000000);  // REMOVA ESTE SLEEP APÓS IMPLEMENTAR SUA SOLUÇÃO!
+
+    while (virtual_clock->current_time < virtual_clock->closing_time) {
+        if (self->_seat_position == -1) { /* if my customer is not sitting down yet */
+            continue;
+        } else if (customer_is_satisfied(self->_wishes)) { 
+            break;
+        } else {
+            customer_pick_food(self);
+        }
+    }
+
+    customer_leave(self);
     pthread_exit(NULL);
 }
 
-void customer_pick_food(int food_slot) {
+void customer_pick_food(customer_t* self) {
     /* 
         MODIFIQUE ESSA FUNÇÃO PARA GARANTIR O COMPORTAMENTO CORRETO E EFICAZ DO CLIENTE.
         NOTAS:
@@ -40,8 +65,28 @@ void customer_pick_food(int food_slot) {
             POSICIONAL DO CLIENTE NA ESTEIRA (O ASSENTO ONDE ELE ESTÁ SENTADO).
         5.  NOTE QUE CLIENTES ADJACENTES DISPUTARÃO OS MESMOS PRATOS. CUIDADO COM PROBLEMAS DE SINCRONIZAÇÃO!
     */
+    conveyor_belt_t* conveyor = globals_get_conveyor_belt();
+    virtual_clock_t* virtual_clock = globals_get_virtual_clock();
 
-    /* INSIRA SUA LÓGICA AQUI */
+    pthread_mutex_lock(&conveyor->_food_slots_mutex);
+    int next_sushi_position = self->_seat_position + 1 == conveyor->_size ? 0 : self->_seat_position + 1; /* PREVENT LAST SUSHI */
+
+    int prev_sushi = conveyor->_food_slots[self->_seat_position - 1];
+    int front_sushi = conveyor->_food_slots[self->_seat_position];
+    int next_sushi = conveyor->_food_slots[next_sushi_position];
+
+    if (customer_wants_to_eat_this_sushi(self, prev_sushi)) {
+        customer_eat(self, prev_sushi);
+        conveyor->_food_slots[self->_seat_position - 1] = -1;
+    } else if (customer_wants_to_eat_this_sushi(self, front_sushi)) {
+        customer_eat(self, front_sushi);
+        conveyor->_food_slots[self->_seat_position] = -1;
+    } else if (customer_wants_to_eat_this_sushi(self, next_sushi)) {
+        customer_eat(self, next_sushi);
+        conveyor->_food_slots[next_sushi_position] = -1;
+    }
+
+    pthread_mutex_unlock(&conveyor->_food_slots_mutex);
 }
 
 void customer_eat(customer_t* self, enum menu_item food) {
@@ -54,9 +99,7 @@ void customer_eat(customer_t* self, enum menu_item food) {
         4.  CADA PRATO DO MENU (VER ENUM `menu_item` NO ARQUIVO `menu.h` É REPRESENTADO POR UM INTEIRO),
             ENTÃO UM self->_wishes = [0,0,1,2,0] CONDIZ COM O DESEJO DE COMER 1 RAMÉN E 2 ONIGUIRIS.
     */
-
-    /* INSIRA SUA LÓGICA AQUI */
-
+    self->_wishes[food] -= 1;
     /* NÃO EDITE O CONTEÚDO ABAIXO */
     virtual_clock_t* global_clock = globals_get_virtual_clock();
     switch (food) {
@@ -108,7 +151,16 @@ void customer_leave(customer_t* self) {
         1.  ESSA FUNÇÃO DEVERÁ REMOVER O CLIENTE DO ASSENTO DO CONVEYOR_BELT GLOBAL QUANDO EXECUTADA.
     */
     conveyor_belt_t* conveyor_belt = globals_get_conveyor_belt();
+    pthread_mutex_lock(&conveyor_belt->_seats_mutex);
 
+    conveyor_belt->_seats[self->_seat_position] = -1;
+    self->_seat_position = -1;
+
+    print_virtual_time(globals_get_virtual_clock());
+    fprintf(stdout, GREEN "[INFO]" NO_COLOR " The customer %d left the conveyor!\n", self->_id);
+
+    pthread_mutex_unlock(&conveyor_belt->_seats_mutex);
+    customer_finalize(self);
     /* INSIRA SUA LÓGICA AQUI */
 }
 
