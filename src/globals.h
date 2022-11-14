@@ -82,20 +82,27 @@ extern pthread_mutex_t* global_get_mutex_conveyor_seat();
  * 
  * @return pthread_mutex_t* 
  */
-extern pthread_mutex_t* global_get_mutex_custumer_eat();
+extern pthread_mutex_t* global_get_mutex_customer_eat();
 
 /**
  * @brief Retorna o mutex usado para o customer comer
  * 
  * @return pthread_mutex_t* 
  */
-extern pthread_mutex_t* global_get_mutex_custumer_pick_food();
+extern pthread_mutex_t* global_get_mutex_customer_pick_food();
 
 /**
  * @brief Retorna o semaforo dos pratos(dishes - sushichef)
  * @return sem_t* 
  */
-sem_t* global_get_semaphore_sushi_dishes();
+extern sem_t* global_get_semaphore_sushi_dishes();
+
+/**
+ * @brief Retorna o mutex usado para o customer comer
+ * 
+ * @return pthread_mutex_t* 
+ */
+extern pthread_mutex_t* global_get_mutex_customer_run();
 
 /**
  * @brief Finaliza todas as variáveis globais.

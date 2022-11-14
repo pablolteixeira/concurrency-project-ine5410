@@ -15,17 +15,25 @@ void* customer_run(void* arg) {
             GUIE O CLIENTE PARA UM ASSENTO LIVRE.
         2.  APÓS SENTAR-SE, O CLIENTE COMEÇARÁ PEGAR E COMER OS PRATOS DA ESTEIRA.
         3.  O CLIENTE SÓ PODERÁ PEGAR UM PRATO QUANDO A ESTEIRA ESTIVER PARADA.
+
         4.  O CLIENTE SÓ PEGARÁ PRATOS CASO ELE DESEJE-OS, INFORMAÇÃO CONTIDA NO ARRAY self->_wishes[...].
         5.  APÓS CONSUMIR TODOS OS PRATOS DESEJADOS, O CLIENTE DEVERÁ SAIR IMEDIATAMENTE DA ESTEIRA.
         6.  QUANTO O RESTAURANTE FECHAR, O CLIENTE DEVERÁ SAIR IMEDIATAMENTE DA ESTEIRA. 
+
         7.  CASO O CLIENTE ESTEJA COMENDO QUANDO O SUSHI SHOP FECHAR, ELE DEVE TERMINAR DE COMER E EM SEGUIDA
             SAIR IMEDIATAMENTE DA ESTEIRA.
         8.  LEMBRE-SE DE TOMAR CUIDADO COM ERROS DE CONCORRÊNCIA!
     */ 
     customer_t* self = (customer_t*) arg;
     virtual_clock_t* virtual_clock = globals_get_virtual_clock();
-    pthread_mutex_t* mutex_eat = global_get_mutex_custumer_eat();
-    pthread_mutex_t* mutex_pick_food = global_get_mutex_custumer_pick_food();
+
+    pthread_mutex_t* mutex_eat = global_get_mutex_customer_eat();
+    pthread_mutex_t* mutex_pick_food = global_get_mutex_customer_pick_food();
+    pthread_mutex_t* mutex_run = global_get_mutex_customer_run();
+
+    conveyor_belt_t* conveyor = globals_get_conveyor_belt();
+
+    pthread_mutex_init(mutex_run, NULL);
 
     pthread_mutex_init(mutex_eat, NULL);
 
@@ -36,7 +44,31 @@ void* customer_run(void* arg) {
             break;
         }
         
-    }
+        if (self->_seat_position > 0) {
+            if (self->_seat_position != conveyor->_size - 1) {
+
+                for (int i = -1; i < 2; ++i) {
+                    if (conveyor->_food_slots[self->_seat_position - i] > -1 && self->_wishes[conveyor->_food_slots[self->_seat_position - i]] > 0) {
+                        customer_eat(self, self->_wishes[conveyor->_food_slots[self->_seat_position - i]]);
+                        customer_pick_food(self->_seat_position - i);
+                        break;
+                    }
+                }
+            } else if (self->_seat_position == conveyor->_size - 1) {
+                for (int i = -1; i < 2; ++i) {
+                    if (conveyor->_food_slots[self->_seat_position - i] > -1 && self->_wishes[conveyor->_food_slots[self->_seat_position - i]] > 0) {
+                        customer_eat(self, self->_wishes[conveyor->_food_slots[self->_seat_position - i]]);
+                        customer_pick_food(self->_seat_position - i);
+                        break;
+                    }
+                } 
+            }
+        }
+
+    }  
+            
+
+    pthread_mutex_destroy(mutex_run);
 
     pthread_mutex_destroy(mutex_eat);
 
@@ -58,12 +90,15 @@ void customer_pick_food(int food_slot) {
     */
    
     /* INSIRA SUA LÓGICA AQUI */
-    pthread_mutex_t* mutex_pick_food = global_get_mutex_custumer_pick_food();
+    pthread_mutex_t* mutex_pick_food = global_get_mutex_customer_pick_food();
     conveyor_belt_t* conveyor = globals_get_conveyor_belt();
+    sem_t* empty_slots_sem = global_get_empty_slots_sem(); 
 
     pthread_mutex_lock(mutex_pick_food);
     conveyor->_food_slots[food_slot] = -1;
     pthread_mutex_unlock(mutex_pick_food);
+
+    sem_post(empty_slots_sem);
 }
 
 void customer_eat(customer_t* self, enum menu_item food) {
@@ -78,7 +113,7 @@ void customer_eat(customer_t* self, enum menu_item food) {
     */
 
     /* INSIRA SUA LÓGICA AQUI */
-    pthread_mutex_t* mutex_eat = global_get_mutex_custumer_eat();
+    pthread_mutex_t* mutex_eat = global_get_mutex_customer_eat();
 
     pthread_mutex_lock(mutex_eat);
     self->_wishes[food] -= 1;

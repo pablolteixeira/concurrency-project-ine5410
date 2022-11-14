@@ -21,8 +21,9 @@ pthread_mutex_t global_mutex_conveyor_seat;
 
 sem_t global_semaphore_sushi_dishes;
 
-pthread_mutex_t global_mutex_custumer_eat;
-pthread_mutex_t global_mutex_custumer_pick_food;
+pthread_mutex_t global_mutex_customer_eat;
+pthread_mutex_t global_mutex_customer_pick_food;
+pthread_mutex_t global_mutex_customer_run;
 
 virtual_clock_t* global_virtual_clock = NULL;
 conveyor_belt_t* global_conveyor_belt = NULL;
@@ -74,12 +75,16 @@ sem_t* global_get_semaphore_sushi_dishes() {
     return &global_semaphore_sushi_dishes;
 }
 
-pthread_mutex_t* global_get_mutex_custumer_eat() {
-    return &global_mutex_custumer_eat;
+pthread_mutex_t* global_get_mutex_customer_eat() {
+    return &global_mutex_customer_eat;
 }
 
-pthread_mutex_t* global_get_mutex_custumer_pick_food() {
-    return &global_mutex_custumer_pick_food;
+pthread_mutex_t* global_get_mutex_customer_pick_food() {
+    return &global_mutex_customer_pick_food;
+}
+
+pthread_mutex_t* global_get_mutex_customer_run() {
+    return &global_mutex_customer_run;
 }
 
 /**
