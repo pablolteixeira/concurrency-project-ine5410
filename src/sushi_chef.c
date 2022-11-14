@@ -111,7 +111,6 @@ void sushi_chef_place_food(sushi_chef_t* self, enum menu_item dish) {
     
     sem_wait(empty_slot_sem);
     while (conveyor_belt->_food_slots[self->_seat_position] >= 0 && conveyor_belt->_food_slots[self->_seat_position] <= 4) {
-        fprintf(stdout, GREEN "[WAITING AN EMPTY SLOT]");
     }
     pthread_mutex_lock(&conveyor_belt->_food_slots_mutex);
 

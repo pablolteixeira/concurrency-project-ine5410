@@ -105,6 +105,13 @@ extern sem_t* global_get_semaphore_sushi_dishes();
 extern pthread_mutex_t* global_get_mutex_customer_run();
 
 /**
+ * @brief Retorna o mutex usado para o customer main
+ * 
+ * @return pthread_mutex_t* 
+ */
+extern pthread_mutex_t* global_get_mutex_customer_main();
+
+/**
  * @brief Finaliza todas as variáveis globais.
  * 
  */

@@ -24,54 +24,55 @@ void* customer_run(void* arg) {
             SAIR IMEDIATAMENTE DA ESTEIRA.
         8.  LEMBRE-SE DE TOMAR CUIDADO COM ERROS DE CONCORRÊNCIA!
     */ 
+
     customer_t* self = (customer_t*) arg;
     virtual_clock_t* virtual_clock = globals_get_virtual_clock();
-
-    pthread_mutex_t* mutex_eat = global_get_mutex_customer_eat();
-    pthread_mutex_t* mutex_pick_food = global_get_mutex_customer_pick_food();
-    pthread_mutex_t* mutex_run = global_get_mutex_customer_run();
-
     conveyor_belt_t* conveyor = globals_get_conveyor_belt();
 
-    pthread_mutex_init(mutex_run, NULL);
+    pthread_mutex_t* mutex_main = global_get_mutex_customer_main();
+    pthread_mutex_t* mutex_eat = global_get_mutex_customer_eat();
+    pthread_mutex_t* mutex_pick_food = global_get_mutex_customer_pick_food();
 
+    pthread_mutex_init(mutex_main, NULL);
     pthread_mutex_init(mutex_eat, NULL);
-
     pthread_mutex_init(mutex_pick_food, NULL);
 
     while (TRUE) {
-        if (virtual_clock->current_time > virtual_clock->closing_time) {
-            break;
-        }
-        
         if (self->_seat_position > 0) {
+            //pthread_mutex_lock(mutex_main);
             if (self->_seat_position != conveyor->_size - 1) {
-
                 for (int i = -1; i < 2; ++i) {
-                    if (conveyor->_food_slots[self->_seat_position - i] > -1 && self->_wishes[conveyor->_food_slots[self->_seat_position - i]] > 0) {
-                        customer_eat(self, self->_wishes[conveyor->_food_slots[self->_seat_position - i]]);
-                        customer_pick_food(self->_seat_position - i);
-                        break;
+                    if (conveyor->_food_slots[self->_seat_position + i] > -1) {
+                        if (self->_wishes[conveyor->_food_slots[self->_seat_position + i]] > 0) {
+                            customer_eat(self, conveyor->_food_slots[self->_seat_position + i]);
+                            customer_pick_food(self->_seat_position + i);
+                            break;
+                        }
                     }
                 }
             } else if (self->_seat_position == conveyor->_size - 1) {
-                for (int i = -1; i < 2; ++i) {
-                    if (conveyor->_food_slots[self->_seat_position - i] > -1 && self->_wishes[conveyor->_food_slots[self->_seat_position - i]] > 0) {
-                        customer_eat(self, self->_wishes[conveyor->_food_slots[self->_seat_position - i]]);
-                        customer_pick_food(self->_seat_position - i);
-                        break;
+                for (int i = -1; i < 1; ++i) {
+                    if (conveyor->_food_slots[self->_seat_position + i] > -1) {
+                        if (self->_wishes[conveyor->_food_slots[self->_seat_position + i]] > 0) {
+                            customer_eat(self, self->_wishes[conveyor->_food_slots[self->_seat_position + i]]);
+                            customer_pick_food(self->_seat_position + i);
+                            break;
+                        }
                     }
-                } 
+                }
+                if (conveyor->_food_slots[0] > -1) {
+                    if (self->_wishes[conveyor->_food_slots[0]] > 0) {
+                        customer_eat(self, self->_wishes[conveyor->_food_slots[0]]);
+                        customer_pick_food(0);
+                    }
+                }
             }
+            //pthread_mutex_unlock(mutex_main);
         }
-
-    }  
-            
-
-    pthread_mutex_destroy(mutex_run);
-
+    }
+    
+    pthread_mutex_destroy(mutex_main);
     pthread_mutex_destroy(mutex_eat);
-
     pthread_mutex_destroy(mutex_pick_food);
 
     pthread_exit(NULL);
@@ -118,8 +119,8 @@ void customer_eat(customer_t* self, enum menu_item food) {
     pthread_mutex_lock(mutex_eat);
     self->_wishes[food] -= 1;
     pthread_mutex_unlock(mutex_eat);
-
-    /* NÃO EDITE O CONTEÚDO ABAIXO */
+    
+    /* NÃO EDITE O CONTEÚDO ABAIXO */ 
     virtual_clock_t* global_clock = globals_get_virtual_clock();
     switch (food) {
         case Sushi:
@@ -161,7 +162,7 @@ void customer_eat(customer_t* self, enum menu_item food) {
         default:
             fprintf(stdout, RED "[ERROR] Invalid menu_item variant passed to `customer_eat()`.\n" NO_COLOR);
             exit(EXIT_FAILURE);
-    }
+    } 
 }
 
 void customer_leave(customer_t* self) {
@@ -173,7 +174,7 @@ void customer_leave(customer_t* self) {
     conveyor_belt_t* conveyor_belt = globals_get_conveyor_belt();
 
     pthread_mutex_lock(&conveyor_belt->_seats_mutex);
-    conveyor_belt->_seats[self->_seat_position] = -1;
+    //queue_remove(self);
     pthread_mutex_unlock(&conveyor_belt->_seats_mutex);
 
     customer_finalize(self);

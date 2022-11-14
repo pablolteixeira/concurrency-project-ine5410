@@ -4,7 +4,6 @@
 
 #include <semaphore.h>
 
-
 /*
     VOCÊ DEVE CRIAR VARIÁVEIS GLOBAIS PARA ARMAZENAR DADOS SOBRE A SIMULAÇÃO.
     NOTAS:
@@ -24,6 +23,7 @@ sem_t global_semaphore_sushi_dishes;
 pthread_mutex_t global_mutex_customer_eat;
 pthread_mutex_t global_mutex_customer_pick_food;
 pthread_mutex_t global_mutex_customer_run;
+pthread_mutex_t global_mutex_customer_main;
 
 virtual_clock_t* global_virtual_clock = NULL;
 conveyor_belt_t* global_conveyor_belt = NULL;
@@ -87,6 +87,9 @@ pthread_mutex_t* global_get_mutex_customer_run() {
     return &global_mutex_customer_run;
 }
 
+pthread_mutex_t* global_get_mutex_customer_main() {
+    return &global_mutex_customer_main;
+}
 /**
  * @brief Finaliza todas as variáveis globais.
  * Se criar alguma variável global que faça uso de mallocs, lembre-se sempre 
