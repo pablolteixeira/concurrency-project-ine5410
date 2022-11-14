@@ -54,7 +54,7 @@ void* customer_run(void* arg) {
                 for (int i = -1; i < 1; ++i) {
                     if (conveyor->_food_slots[self->_seat_position + i] > -1) {
                         if (self->_wishes[conveyor->_food_slots[self->_seat_position + i]] > 0) {
-                            customer_eat(self, self->_wishes[conveyor->_food_slots[self->_seat_position + i]]);
+                            customer_eat(self, conveyor->_food_slots[self->_seat_position + i]);
                             customer_pick_food(self->_seat_position + i);
                             break;
                         }
@@ -62,12 +62,21 @@ void* customer_run(void* arg) {
                 }
                 if (conveyor->_food_slots[0] > -1) {
                     if (self->_wishes[conveyor->_food_slots[0]] > 0) {
-                        customer_eat(self, self->_wishes[conveyor->_food_slots[0]]);
+                        customer_eat(self, conveyor->_food_slots[0]);
                         customer_pick_food(0);
                     }
                 }
             }
             //pthread_mutex_unlock(mutex_main);
+        }
+        
+        int count = 0;
+        for (int i = 0; i < 5; ++i) {
+            count += self->_wishes[i];
+        }
+
+        if (!count) {
+            customer_leave(self);
         }
     }
     
@@ -172,12 +181,15 @@ void customer_leave(customer_t* self) {
         1.  ESSA FUNÇÃO DEVERÁ REMOVER O CLIENTE DO ASSENTO DO CONVEYOR_BELT GLOBAL QUANDO EXECUTADA.
     */
     conveyor_belt_t* conveyor_belt = globals_get_conveyor_belt();
+    sem_t* semaphore = global_get_semaphore_conveyor();
 
     pthread_mutex_lock(&conveyor_belt->_seats_mutex);
-    //queue_remove(self);
+    conveyor_belt->_seats[self->_seat_position] = -1;
     pthread_mutex_unlock(&conveyor_belt->_seats_mutex);
-
     customer_finalize(self);
+
+    sem_post(semaphore);
+
 }
 
 customer_t* customer_init() {

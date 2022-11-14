@@ -20,13 +20,11 @@ int hostess_check_for_a_free_conveyor_seat() {
     sem_t* semaphore = global_get_semaphore_conveyor();
     pthread_mutex_t* mutex_conveyor_enter = global_get_mutex_conveyor_enter();
 
-
+    sem_wait(semaphore);
+    
     print_virtual_time(globals_get_virtual_clock());
     fprintf(stdout, GREEN "[INFO]" NO_COLOR " O Hostess está procurando por um assento livre...\n");
     print_conveyor_belt(conveyor);
-
-
-    sem_wait(semaphore);
 
     while (TRUE) {
         pthread_mutex_lock(mutex_conveyor_enter);
@@ -58,17 +56,15 @@ void hostess_guide_first_in_line_customer_to_conveyor_seat(int seat) {
 
     conveyor_belt_t* conveyor = globals_get_conveyor_belt();
     queue_t* queue = globals_get_queue();
-    sem_t* semaphore = global_get_semaphore_conveyor();
+    
     pthread_mutex_t* mutex_conveyor_seat = global_get_mutex_conveyor_seat();
 
     pthread_mutex_lock(mutex_conveyor_seat);
     customer_t* customer = queue_remove(queue);
     conveyor->_seats[seat] = 1;
-    printf("POSTION SEAT -> %d\n", seat);
     customer->_seat_position = seat;
     pthread_mutex_unlock(mutex_conveyor_seat);
 
-    sem_post(semaphore);
     print_virtual_time(globals_get_virtual_clock());
     fprintf(stdout, GREEN "[INFO]" NO_COLOR " O Hostess levou o cliente %d para o assento %d!\n", customer->_id, seat);
     print_conveyor_belt(conveyor);    
